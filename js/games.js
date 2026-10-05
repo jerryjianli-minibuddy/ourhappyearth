@@ -167,7 +167,7 @@
       card.type = "button";
       card.draggable = true;
       card.dataset.id = id;
-      card.innerHTML = plantSVG(p, 42) + `<span>${p.name}</span>`;
+      card.innerHTML = plantPic(p, 42) + `<span>${p.name}</span>`;
       card.addEventListener("click", () => selectCard(card));
       card.addEventListener("dragstart", e => { e.dataTransfer.setData("text/plain", id); selectCard(card, true); });
       pool.appendChild(card);
