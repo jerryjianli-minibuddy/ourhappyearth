@@ -10,6 +10,8 @@
   const ENVELOPE = "-121,32.3,-114,35.9"; // Southern California box: west, south, east, north
   const MIN_RECENT_ACRES = 100;
   const OFFICIAL = "https://www.fire.ca.gov/incidents";
+  const RECENT_DAYS = 14; // "recent" = reported in the last two weeks
+  const SOCAL_COUNTIES = ["imperial", "kern", "los angeles", "orange", "riverside", "san bernardino", "san diego", "san luis obispo", "santa barbara", "ventura"];
 
   const COLORS = {
     active: { stroke: "#FF3B1F", fill: "#FF7A1A" },
@@ -43,9 +45,19 @@
   const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const pick = (p, names) => { for (const n of names) if (p[n] !== undefined && p[n] !== null && p[n] !== "") return p[n]; return null; };
   const fmtAcres = n => {
-    if (n === null || n === undefined || isNaN(n)) return "size not known yet";
+    if (n === null || n === undefined || isNaN(n)) return "size not reported yet";
     n = Number(n);
+    if (n < 1) return "size not updated yet (first reports are often tiny)";
     return (n < 10 ? n.toFixed(1) : Math.round(n).toLocaleString()) + " acres";
+  };
+  /* The national feed also holds many tiny dispatch reports with code names like LAC-355018 and old records nobody closed out.
+     These helpers keep the map to real, recent, Southern California fires. */
+  const cleanName = s => { s = String(s || "").trim(); const i = s.lastIndexOf("/"); return i >= 0 ? s.slice(i + 1).trim() : s; };
+  const isCode = s => /^([A-Za-z]{1,4}[-_ ]?)?\d+[A-Za-z]?$/.test(String(s || "").trim());
+  const ageDays = ms => { const t = Number(ms); return ms && !isNaN(t) ? (Date.now() - t) / 864e5 : null; };
+  const inSoCal = (state, county) => {
+    if (state && !/CA$/i.test(String(state))) return false;
+    return SOCAL_COUNTIES.indexOf(String(county || "").toLowerCase()) >= 0;
   };
   const fmtDate = ms => {
     if (!ms) return "";
@@ -68,7 +80,7 @@
 
   /* ---------- the info panel with animals ---------- */
   function kindLabel(f) {
-    if (f.kind === "active") return f.rx ? "Planned burn happening now" : "Burning now (or very recently)";
+    if (f.kind === "active") return f.rx ? "Planned burn (last two weeks)" : "Recent fire (last two weeks)";
     if (f.kind === "recent") return f.rx ? "Planned burn earlier this year" : "Burned earlier this year";
     return "Famous past fire";
   }
@@ -140,18 +152,21 @@
 
   function normalize(feature, kindHint) {
     const p = feature.properties || {};
-    const name = pick(p, ["poly_IncidentName", "attr_IncidentName", "IncidentName", "incidentname", "FIRE_NAME", "poly_FeatureCategory"]) || "Unnamed fire";
+    const rawName = cleanName(pick(p, ["poly_IncidentName", "attr_IncidentName", "IncidentName", "incidentname", "FIRE_NAME", "poly_FeatureCategory"]) || "");
+    const name = !rawName ? "Unnamed fire" : isCode(rawName) ? "Unnamed fire (report " + rawName + ")" : rawName;
+    const state = pick(p, ["attr_POOState", "POOState"]);
+    const county = pick(p, ["attr_POOCounty", "POOCounty"]);
     const acres = pick(p, ["attr_IncidentSize", "poly_GISAcres", "poly_Acres_AutoCalc", "GISAcres", "IncidentSize", "DailyAcres"]);
     const date = pick(p, ["attr_FireDiscoveryDateTime", "FireDiscoveryDateTime", "poly_CreateDate", "poly_DateCurrent"]);
     const contained = pick(p, ["attr_PercentContained", "PercentContained"]);
     const type = String(pick(p, ["attr_IncidentTypeCategory", "IncidentTypeCategory"]) || "").toUpperCase();
     const id = pick(p, ["attr_IrwinID", "poly_IRWINID", "IrwinID", "GlobalID"]) || name;
-    return { id: String(id).toLowerCase(), name: toTitle(name), acres: acres === null ? null : Number(acres), date, contained: contained === null ? null : Number(contained), rx: type === "RX", kind: kindHint };
+    return { id: String(id).toLowerCase(), name: toTitle(name), acres: acres === null ? null : Number(acres), date, contained: contained === null ? null : Number(contained), rx: type === "RX", kind: kindHint, state, county, code: isCode(rawName) };
   }
   function toTitle(s) {
     s = String(s);
     if (s === s.toUpperCase()) s = s.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-    return /fire$|incident$/i.test(s) || /\bfire\b/i.test(s) ? s : s + " Fire";
+    return /fire$|incident$|\)$/i.test(s) || /\bfire\b/i.test(s) ? s : s + " Fire";
   }
   function polyCenter(feature) {
     try { return boundsCenter(L.geoJSON(feature)); } catch (e) { return null; }
@@ -199,6 +214,10 @@
       let nActive = 0, nRecent = 0;
       (c.features || []).forEach(ft => {
         const f = normalize(ft, "active");
+        if (!inSoCal(f.state, f.county)) return;
+        const age = ageDays(f.date);
+        if (age === null || age > RECENT_DAYS) return;
+        if (!(f.acres >= 10) && age > 7) return;
         const ll = polyCenter(ft); if (!ll) return;
         f.ll = [ll.lat, ll.lng];
         seen[f.id] = true; seen[f.name.toLowerCase()] = true;
@@ -209,11 +228,17 @@
         const cat = String((ft.properties || {}).IncidentTypeCategory || "").toUpperCase();
         if (cat && cat !== "WF" && cat !== "RX") return;
         if (seen[f.id] || seen[f.name.toLowerCase()]) return;
-        const ll = pointOf(ft); if (!ll) return;
-        f.ll = [ll.lat, ll.lng]; f.rx = cat === "RX";
+        if (!inSoCal(f.state, f.county)) return;
         f.acres = pick(ft.properties || {}, ["IncidentSize", "DailyAcres", "CalculatedAcres"]);
         f.acres = f.acres === null ? null : Number(f.acres);
         f.date = pick(ft.properties || {}, ["FireDiscoveryDateTime"]);
+        const big = f.acres >= 10;
+        const age = ageDays(f.date);
+        if (age === null || age > RECENT_DAYS) return;      /* old records nobody closed out */
+        if (f.code && !big) return;                          /* tiny dispatch reports like LAC-355018 */
+        if (!big && age > 7) return;                         /* small and a week old: probably out */
+        const ll = pointOf(ft); if (!ll) return;
+        f.ll = [ll.lat, ll.lng]; f.rx = cat === "RX";
         f.contained = pick(ft.properties || {}, ["PercentContained"]);
         f.contained = f.contained === null ? null : Number(f.contained);
         seen[f.id] = true; seen[f.name.toLowerCase()] = true;
@@ -223,13 +248,14 @@
         const f = normalize(ft, "recent");
         if (seen[f.id] || seen[f.name.toLowerCase()]) return;
         if (f.acres !== null && f.acres < MIN_RECENT_ACRES) return;
+        if (!inSoCal(f.state, f.county)) return;
         const ll = polyCenter(ft); if (!ll) return;
         f.ll = [ll.lat, ll.lng];
         seen[f.id] = true;
         addFire(f, ft); nRecent++;
       });
       const t = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-      setStatus(`<strong>Live fire map loaded at ${t}.</strong> ${nActive} burning now or very recently, ${nRecent} bigger fires earlier this year. Data: National Interagency Fire Center. ${nActive === 0 ? "No active fires were reported in Southern California right now. That is good news!" : ""}`, "ok");
+      setStatus(`<strong>Fire map updated at ${t}.</strong> ${nActive} recent fires (last two weeks) and ${nRecent} bigger fires earlier this year. Source: National Interagency Fire Center, checked every 10 minutes while this page is open. That feed can be hours behind and early sizes are often too small, so for the newest facts see <a href="${OFFICIAL}" target="_blank" rel="noopener">Cal Fire</a>. ${nActive === 0 ? "No recent fires were reported in Southern California. That is good news!" : ""}`, "ok");
     }).catch(() => {
       clearLive();
       setStatus(`We could not reach the live fire map right now. Maybe the internet is off, or the fire service is busy. You can still click the purple flames for famous past fires. For today&rsquo;s fires, check the <a href="${OFFICIAL}" target="_blank" rel="noopener">official Cal Fire map</a>.`, "warn");
