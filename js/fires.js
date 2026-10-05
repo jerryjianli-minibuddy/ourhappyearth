@@ -98,7 +98,6 @@
       <p class="muted-note">Best guess from the map spot: ${esc(habNames.join(", ") || "wild land")}. A map can't tell us exactly what grows in every spot, so ask an expert to check!</p>
       <div class="fire-habs">${habBlocks}</div>
       <h3>Animals that might live around here</h3>
-      ${(typeof ANIMAL_PHOTOS !== "undefined" && Object.keys(ANIMAL_PHOTOS).length) ? '<p class="muted-note">The animal pictures are AI-generated, so they may not look exactly like the real animals.</p>' : ""}
       <div class="animal-grid">${list.map(a => `
         <article class="animal-card">
           <div class="animal-pic">${animalPic(a, 110)}</div>
