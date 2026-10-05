@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Games | Our Happy Earth</title>
+<meta name="description" content="Play a nature quiz, spot native and invasive plants, and sort plants into their habitats.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg' aria-hidden='true'%3E%3Ccircle cx='32' cy='32' r='29' fill='%234DA3D8'/%3E%3Cpath d='M14 22c6-8 16-8 20-4 3 3-1 8-6 9-5 1-5 6-10 5-4-1-7-6-4-10z' fill='%235CB85C'/%3E%3Cpath d='M38 40c6-4 14-2 15 4-3 8-10 12-17 10-4-2-3-8 2-14z' fill='%235CB85C'/%3E%3Ccircle cx='24' cy='31' r='3' fill='%231F3A2B'/%3E%3Ccircle cx='40' cy='31' r='3' fill='%231F3A2B'/%3E%3Cpath d='M23 40c5 6 13 6 18 0' fill='none' stroke='%231F3A2B' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='19' cy='38' r='3' fill='%23F9A6A6' opacity='.8'/%3E%3Ccircle cx='45' cy='38' r='3' fill='%23F9A6A6' opacity='.8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/bear.css">
+<link rel="stylesheet" href="css/arcade.css">
+
+</head>
+<body data-page="games">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="index.html"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#4DA3D8"/><path d="M14 22c6-8 16-8 20-4 3 3-1 8-6 9-5 1-5 6-10 5-4-1-7-6-4-10z" fill="#5CB85C"/><path d="M38 40c6-4 14-2 15 4-3 8-10 12-17 10-4-2-3-8 2-14z" fill="#5CB85C"/><circle cx="24" cy="31" r="3" fill="#1F3A2B"/><circle cx="40" cy="31" r="3" fill="#1F3A2B"/><path d="M23 40c5 6 13 6 18 0" fill="none" stroke="#1F3A2B" stroke-width="3" stroke-linecap="round"/><circle cx="19" cy="38" r="3" fill="#F9A6A6" opacity=".8"/><circle cx="45" cy="38" r="3" fill="#F9A6A6" opacity=".8"/></svg><span>Our Happy Earth</span></a>
+<nav aria-label="Main"><ul><li><a href="index.html">Home</a></li><li><a href="where.html">Where</a></li><li><a href="what.html">What</a></li><li><a href="how.html">How</a></li><li><a href="plants.html">Plants</a></li><li><a href="seeds.html">Seeds</a></li><li><a href="games.html" aria-current="page">Games</a></li></ul></nav>
+</div></header>
+<main id="main">
+
+<section class="page-hero"><div class="wrap">
+<h1>Games</h1>
+<p>Play, learn, and become an Earth helper! Every game teaches you something about plants.</p>
+</div></section>
+<section class="block"><div class="wrap">
+<div class="tools"><button class="btn ghost small" id="sound-toggle" type="button" aria-pressed="false">Sound: off</button></div>
+<div class="tab-group"><h2>Arcade games</h2>
+<div class="tabs" role="tablist" aria-label="Arcade games">
+<button class="tab" role="tab" data-game="bully" aria-selected="true">&#128296; Bully Buster</button>
+<button class="tab" role="tab" data-game="catch" aria-selected="false">&#129530; Seed Catcher</button>
+<button class="tab" role="tab" data-game="merge" aria-selected="false">&#127795; Grow &amp; Merge</button>
+<button class="tab" role="tab" data-game="grow" aria-selected="false">&#127966;&#65039; Restore the Hill</button>
+</div></div>
+<div class="tab-group"><h2>Brain games</h2>
+<div class="tabs" role="tablist" aria-label="Brain games">
+<button class="tab" role="tab" data-game="quiz" aria-selected="false">&#10067; Nature Quiz</button>
+<button class="tab" role="tab" data-game="spot" aria-selected="false">&#128270; Spot It!</button>
+<button class="tab" role="tab" data-game="sort" aria-selected="false">&#129513; Sort It!</button>
+</div></div>
+<div class="game" id="game-bully" role="tabpanel"></div>
+<div class="game" id="game-catch" role="tabpanel" hidden></div>
+<div class="game" id="game-merge" role="tabpanel" hidden></div>
+<div class="game" id="game-grow" role="tabpanel" hidden></div>
+<div class="game" id="game-quiz" role="tabpanel" hidden></div>
+<div class="game" id="game-spot" role="tabpanel" hidden></div>
+<div class="game" id="game-sort" role="tabpanel" hidden></div>
+<p style="margin-top:18px">Stuck? Ask Cali, or check the <a href="plants.html">plant guide</a> to learn more.</p>
+</div></section>
+
+</main>
+<footer class="site-footer"><div class="wrap">
+<p><strong>Our Happy Earth</strong> is a school project made by kids who love nature.</p>
+<p>Our plant facts are a draft. We are asking a plant expert to check them.</p>
+<p>Always ask a grown-up before you plant, pull, or touch plants outside. Never eat a plant you find outside.</p>
+</div></footer>
+<script src="js/photos.js"></script><script src="js/plants.js"></script><script src="js/questions.js"></script><script src="js/arcade-core.js"></script><script src="js/arcade-more.js"></script><script src="js/games.js"></script>
+<script src="js/bear.js"></script>
+</body>
+</html>

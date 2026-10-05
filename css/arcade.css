@@ -1,0 +1,113 @@
+/* Arcade games */
+.tab-group { margin-bottom: 14px; }
+.tab-group h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--muted); }
+.tab { font-size: 1rem; padding: 8px 16px; }
+.btn.small { padding: 6px 14px; font-size: .9rem; }
+.tools { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+
+.hud { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 16px; font-weight: 800; background: var(--leaf); border-radius: 14px; padding: 8px 14px; margin-bottom: 12px; }
+.hud strong { font-family: "Fredoka", sans-serif; font-size: 1.2rem; color: var(--green-dark); }
+.lives { color: #D6334B; font-size: 1.4rem; letter-spacing: 2px; }
+.hint { color: var(--muted); font-size: .95rem; text-align: center; margin: 8px 0; }
+.arcade-icon { font-size: 4rem; line-height: 1; }
+.bestline { font-size: 1.1rem; }
+.final .btn { font-size: 1.2rem; padding: 14px 34px; }
+
+/* Bully Buster */
+.hole-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 480px; margin: 0 auto; }
+.hole { position: relative; aspect-ratio: 1 / 1; background: #BFE3C3; border: 0; border-radius: 18px; padding: 0; overflow: hidden; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.hole .dirt { position: absolute; left: 6%; right: 6%; bottom: 4%; height: 26%; background: #6B4A2B; border-radius: 50%; box-shadow: inset 0 6px 0 #4A3119; }
+.mole { position: absolute; left: 50%; bottom: 14%; transform: translate(-50%, 130%); transition: transform .12s ease-out; display: flex; flex-direction: column; align-items: center; pointer-events: none; width: 92%; }
+.mole.up { transform: translate(-50%, 0); }
+.mole .plant-svg, .mole .plant-photo { width: 62%; height: auto; aspect-ratio: 1 / 1; border-radius: 50%; border: 5px solid; background: #fff; object-fit: cover; }
+.mole.is-bully .plant-svg, .mole.is-bully .plant-photo { border-color: #D6334B; }
+.mole.is-friend .plant-svg, .mole.is-friend .plant-photo { border-color: #2E9A55; }
+.mole-name { font-size: .72rem; font-weight: 800; line-height: 1.1; background: #fff; border-radius: 99px; padding: 1px 8px; margin-top: 2px; max-width: 100%; text-align: center; }
+.mole.hit-good { animation: hit-good .26s; }
+.mole.hit-bad { animation: hit-bad .26s; }
+@keyframes hit-good { 0% { transform: translate(-50%, 0) scale(1); } 50% { transform: translate(-50%, -10%) scale(1.25); filter: brightness(1.4); } 100% { transform: translate(-50%, 130%) scale(.6); } }
+@keyframes hit-bad { 0%, 100% { transform: translate(-50%, 0); } 25% { transform: translate(-56%, 0); } 75% { transform: translate(-44%, 0); } }
+.bb-msg { text-align: center; min-height: 3.2em; background: var(--sun-soft); border-radius: 12px; padding: 8px 12px; margin: 12px auto 0; max-width: 480px; font-size: .95rem; }
+
+/* Seed Catcher */
+.canvas-wrap { max-width: 400px; margin: 0 auto; }
+#sc-canvas { width: 100%; height: auto; aspect-ratio: 360 / 520; border-radius: 18px; border: 3px solid var(--line); touch-action: none; display: block; cursor: ew-resize; background: #BFE3F3; }
+
+/* Grow & Merge */
+.merge-board { position: relative; width: min(100%, 420px); aspect-ratio: 1 / 1; margin: 0 auto; background: #D8C7A5; border-radius: 16px; padding: 8px; touch-action: none; user-select: none; }
+.merge-cells { position: absolute; inset: 8px; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 0; }
+.mcell { margin: 3px; background: rgba(255, 255, 255, .35); border-radius: 12px; }
+.tiles { position: absolute; inset: 8px; }
+.tile { position: absolute; width: 25%; height: 25%; padding: 3px; transition: left .11s ease-out, top .11s ease-out; }
+.tile-in { width: 100%; height: 100%; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #EADBC2; box-shadow: 0 2px 0 rgba(0, 0, 0, .12); overflow: hidden; }
+.tile-in svg { width: 70%; height: auto; flex: none; }
+.tile-name { font-size: .62rem; font-weight: 800; line-height: 1; margin-top: -2px; color: var(--ink); }
+.tile[data-v="2"] .tile-in { background: #E0EBC6; }
+.tile[data-v="3"] .tile-in { background: #CFE8B7; }
+.tile[data-v="4"] .tile-in { background: #B9DEA3; }
+.tile[data-v="5"] .tile-in { background: #FBE5A8; }
+.tile[data-v="6"] .tile-in { background: #A8D5A0; }
+.tile[data-v="7"] .tile-in { background: #86C57F; }
+.tile[data-v="8"] .tile-in { background: #FFD76A; box-shadow: 0 0 14px #FFD76A; }
+.tile.new .tile-in { animation: tile-new .2s ease-out; }
+.tile.merged .tile-in { animation: tile-merge .22s ease-out; }
+@keyframes tile-new { from { transform: scale(.3); } to { transform: scale(1); } }
+@keyframes tile-merge { 0% { transform: scale(1); } 50% { transform: scale(1.25); } 100% { transform: scale(1); } }
+.dpad { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 12px 0; }
+.dpad div { display: flex; gap: 6px; }
+.dpad .btn { min-width: 52px; font-size: 1.3rem; }
+.stages { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 2px; margin-top: 10px; }
+.stage { display: flex; flex-direction: column; align-items: center; font-size: .65rem; font-weight: 800; width: 52px; text-align: center; line-height: 1.05; }
+.arrow { color: var(--muted); font-weight: 800; }
+
+/* Restore the Hill */
+.rc-top { margin-bottom: 12px; }
+.rc-seeds { font-size: 1.3rem; font-weight: 800; }
+.rc-seeds strong { font-family: "Fredoka", sans-serif; font-size: 1.8rem; color: var(--green-dark); }
+.rc-seeds small { color: var(--muted); font-size: .85rem; }
+.rc-progress { height: 16px; background: var(--leaf); border-radius: 99px; overflow: hidden; margin: 6px 0; }
+.rc-progress > div { height: 100%; width: 0; background: linear-gradient(90deg, #7DB06A, #2E7D4F); transition: width .4s; }
+.rc-pct { font-weight: 800; color: var(--muted); font-size: .95rem; }
+.rc-main { display: grid; grid-template-columns: 1fr; gap: 18px; }
+@media (min-width: 820px) { .rc-main { grid-template-columns: 1.4fr 1fr; align-items: start; } }
+.gather { width: 100%; font-family: "Fredoka", sans-serif; font-size: 1.5rem; font-weight: 600; padding: 14px; border-radius: 18px; border: 0; background: var(--sun); color: var(--ink); cursor: pointer; box-shadow: 0 5px 0 #D9A62A; position: relative; overflow: visible; touch-action: manipulation; }
+.gather:active { transform: translateY(3px); box-shadow: 0 2px 0 #D9A62A; }
+.gather small { display: block; font-family: "Nunito", sans-serif; font-size: .85rem; font-weight: 700; }
+.floaty { position: absolute; font-weight: 800; color: var(--green-dark); pointer-events: none; animation: floaty .7s ease-out forwards; font-size: 1.2rem; }
+@keyframes floaty { to { transform: translateY(-40px); opacity: 0; } }
+.patch-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin: 10px 0; }
+.patch { aspect-ratio: 1 / 1; border: 0; border-radius: 10px; background: #C9A878; cursor: pointer; padding: 0; display: grid; place-items: center; overflow: hidden; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.patch.s0:hover { background: #D8BB8C; }
+.patch.s1 { background: #B7D98F; }
+.patch.s2 { background: #7DBF7A; cursor: default; }
+.patch.weed { background: #F6C9C0; cursor: pointer; box-shadow: inset 0 0 0 3px #D6334B; animation: weed-pulse .6s infinite alternate; }
+@keyframes weed-pulse { to { transform: scale(1.06); } }
+.patch .plant-svg, .patch .plant-photo { width: 88%; height: auto; border-radius: 8px; }
+.patch .sprout { font-size: 1.4rem; }
+.animals { display: flex; gap: 8px; flex-wrap: wrap; font-size: 1.9rem; }
+.animal.locked { filter: grayscale(1) brightness(.4); opacity: .35; }
+.rc-right h3 { margin-bottom: 8px; }
+.upg { display: grid; grid-template-columns: 1fr auto; text-align: left; width: 100%; margin-bottom: 8px; padding: 10px 14px; border-radius: 14px; border: 2px solid var(--green); background: var(--leaf); font-family: inherit; color: var(--ink); cursor: pointer; }
+.upg:disabled { border-color: var(--line); background: #F0ECE0; color: #7a7a6a; cursor: not-allowed; }
+.upg-name { font-weight: 800; }
+.upg-name em { font-style: normal; color: var(--green-dark); }
+.upg-desc { grid-column: 1; font-size: .85rem; }
+.upg-cost { grid-row: 1 / 3; grid-column: 2; align-self: center; font-weight: 800; font-size: .9rem; }
+
+@media (max-width: 600px) {
+  .tab { padding: 7px 12px; font-size: .92rem; }
+  .mole-name { font-size: .62rem; }
+  .patch-grid { gap: 3px; }
+}
+
+/* Heart Rescue pop-up questions */
+.game { position: relative; }
+.qpop { position: fixed; inset: 0; z-index: 60; background: rgba(31, 58, 43, .6); display: flex; padding: 12px; overflow: auto; }
+.qpop-box { background: #fff; border-radius: 20px; padding: 18px; width: 100%; max-width: 480px; margin: auto; box-shadow: 0 8px 24px rgba(0, 0, 0, .3); animation: qpop-in .22s ease-out; }
+@keyframes qpop-in { from { transform: scale(.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.qpop-head { font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.6rem; color: #D6334B; text-align: center; }
+.qpop-sub { text-align: center; color: var(--muted); margin: 0 0 8px; font-size: .95rem; }
+.qpop .q-pic svg, .qpop .q-pic img { width: 110px; height: 110px; }
+.qpop .q-text { font-size: 1.2rem; text-align: center; }
+.qpop-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.qpop-actions [data-go] { margin-left: auto; }

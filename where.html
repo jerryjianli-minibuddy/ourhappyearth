@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where to Help | Our Happy Earth</title>
+<meta name="description" content="Explore Southern California on a satellite map and learn how to pick a good place to help nature.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg' aria-hidden='true'%3E%3Ccircle cx='32' cy='32' r='29' fill='%234DA3D8'/%3E%3Cpath d='M14 22c6-8 16-8 20-4 3 3-1 8-6 9-5 1-5 6-10 5-4-1-7-6-4-10z' fill='%235CB85C'/%3E%3Cpath d='M38 40c6-4 14-2 15 4-3 8-10 12-17 10-4-2-3-8 2-14z' fill='%235CB85C'/%3E%3Ccircle cx='24' cy='31' r='3' fill='%231F3A2B'/%3E%3Ccircle cx='40' cy='31' r='3' fill='%231F3A2B'/%3E%3Cpath d='M23 40c5 6 13 6 18 0' fill='none' stroke='%231F3A2B' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='19' cy='38' r='3' fill='%23F9A6A6' opacity='.8'/%3E%3Ccircle cx='45' cy='38' r='3' fill='%23F9A6A6' opacity='.8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/bear.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+</head>
+<body data-page="where">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="index.html"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#4DA3D8"/><path d="M14 22c6-8 16-8 20-4 3 3-1 8-6 9-5 1-5 6-10 5-4-1-7-6-4-10z" fill="#5CB85C"/><path d="M38 40c6-4 14-2 15 4-3 8-10 12-17 10-4-2-3-8 2-14z" fill="#5CB85C"/><circle cx="24" cy="31" r="3" fill="#1F3A2B"/><circle cx="40" cy="31" r="3" fill="#1F3A2B"/><path d="M23 40c5 6 13 6 18 0" fill="none" stroke="#1F3A2B" stroke-width="3" stroke-linecap="round"/><circle cx="19" cy="38" r="3" fill="#F9A6A6" opacity=".8"/><circle cx="45" cy="38" r="3" fill="#F9A6A6" opacity=".8"/></svg><span>Our Happy Earth</span></a>
+<nav aria-label="Main"><ul><li><a href="index.html">Home</a></li><li><a href="where.html" aria-current="page">Where</a></li><li><a href="what.html">What</a></li><li><a href="how.html">How</a></li><li><a href="plants.html">Plants</a></li><li><a href="seeds.html">Seeds</a></li><li><a href="games.html">Games</a></li></ul></nav>
+</div></header>
+<main id="main">
+
+<section class="page-hero"><div class="wrap">
+<h1>WHERE can we help?</h1>
+<p>Let&rsquo;s start close to home and think big. A satellite map lets us look down on Earth like a bird!</p>
+</div></section>
+
+<section class="block"><div class="wrap">
+<h2>Satellite map</h2>
+<p>Zoom in and look around. Green places have lots of plants. Brown places are dry or bare. Gray places have buildings and roads. Tap the pins to read about a spot.</p>
+<div class="fire-controls" role="group" aria-label="Fire layers">
+<strong>Fires:</strong>
+<label><input type="checkbox" data-fire-layer="active" checked> <span class="dot dot-active"></span> Burning now</label>
+<label><input type="checkbox" data-fire-layer="recent" checked> <span class="dot dot-recent"></span> Earlier this year</label>
+<label><input type="checkbox" data-fire-layer="old" checked> <span class="dot dot-old"></span> Famous past fires</label>
+<button class="btn ghost small" id="fire-refresh" type="button">Refresh fires</button>
+</div>
+<div id="map" role="application" aria-label="Interactive satellite map of Southern California"></div>
+<div class="map-note">
+<label><input type="checkbox" id="map-wheel"> Zoom with my mouse wheel</label>
+<button class="btn ghost" id="pin-clear" type="button">Remove my pins</button>
+</div>
+<p class="fire-status" id="fire-status" role="status" aria-live="polite">Looking for fires&hellip;</p>
+<p><strong>Click a flame or a burned area</strong> to meet the animals that might live there and learn how fire changes their home.</p>
+<section class="fire-panel" id="fire-panel" aria-live="polite" hidden></section>
+<p><strong>Make your own pin:</strong> Click or tap anywhere on the map to mark a place you want to study. Your pins stay on this computer.</p>
+<div class="pin-form" id="pin-form">
+<label for="pin-note"><strong>Why this spot?</strong></label>
+<input id="pin-note" type="text" maxlength="120" placeholder="Example: lots of bare dirt next to a park">
+<button class="btn" id="pin-save" type="button">Save pin</button>
+<button class="btn ghost" id="pin-cancel" type="button">Cancel</button>
+</div>
+<div class="callout warn"><p>The four map pins show interesting places to study from above. They are <em>not</em> places we are telling anyone to plant. Always ask the people who take care of the land first.</p></div>
+</div></section>
+
+<section class="block" style="padding-top:0"><div class="wrap">
+<h2>Is it a good spot? Use the checklist!</h2>
+<p>Scientists ask questions before they plant. Check each one off as you think about it.</p>
+<ul class="checklist">
+<li><label><input type="checkbox"><span><strong>Do we have permission?</strong> Ask the people who take care of the land.</span></label></li>
+<li><label><input type="checkbox"><span><strong>How much sun does it get?</strong> Many native plants love sunshine.</span></label></li>
+<li><label><input type="checkbox"><span><strong>Is the ground flat or steep?</strong> Steep hills can wash away in the rain.</span></label></li>
+<li><label><input type="checkbox"><span><strong>Where would water come from?</strong> Rain, a creek, or a hose?</span></label></li>
+<li><label><input type="checkbox"><span><strong>What is growing there now?</strong> Look for plant bullies. Check the <a href="plants.html">plant guide</a>.</span></label></li>
+<li><label><input type="checkbox"><span><strong>Who lives there?</strong> Look for birds, bees, butterflies, and other animals.</span></label></li>
+</ul>
+<div class="callout expert"><p><strong>Ask an expert!</strong> A plant expert can tell us which plants and places are best. Native plant nurseries, nature centers, and park rangers love to help kids.</p></div>
+<p>Next up: see <a href="what.html">WHAT you can do</a> and <a href="how.html">HOW to do it</a>.</p>
+</div></section>
+
+</main>
+<footer class="site-footer"><div class="wrap">
+<p><strong>Our Happy Earth</strong> is a school project made by kids who love nature.</p>
+<p>Our plant facts are a draft. We are asking a plant expert to check them.</p>
+<p>Always ask a grown-up before you plant, pull, or touch plants outside. Never eat a plant you find outside.</p>
+</div></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script><script src="js/photos.js"></script><script src="js/animals.js"></script><script src="js/map.js"></script><script src="js/fires.js"></script>
+<script src="js/bear.js"></script>
+</body>
+</html>

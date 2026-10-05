@@ -1,0 +1,51 @@
+/* Cali the bear: picture, animations, floating guide */
+.bear { width: 100%; height: auto; display: block; transform-origin: 50% 100%; animation: bear-bob 3.2s ease-in-out infinite; user-select: none; -webkit-user-drag: none; }
+
+@keyframes bear-bob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-4px) rotate(-1deg); } }
+@keyframes bear-wave { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-6deg) translateY(-4px); } 75% { transform: rotate(6deg) translateY(-4px); } }
+@keyframes bear-jump { 0%, 100% { transform: translateY(0) scale(1, 1); } 15% { transform: translateY(0) scale(1.06, .92); } 45% { transform: translateY(-26px) scale(.97, 1.04); } 75% { transform: translateY(0) scale(1.05, .94); } }
+@keyframes bear-shake { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-6deg); } 75% { transform: rotate(6deg); } }
+@keyframes bear-talk { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.02, .98); } }
+
+.bear.wave { animation: bear-wave .7s ease-in-out 3; }
+.bear.cheer { animation: bear-jump .55s ease-out 2; filter: brightness(1.06) saturate(1.1); }
+.bear.oops { animation: bear-shake .3s ease-in-out 3; filter: saturate(.7) brightness(.95); }
+.bear.talking { animation: bear-talk .24s ease-in-out infinite; }
+.bear.big.wave { animation: bear-wave 1.4s ease-in-out infinite; }
+
+/* hero bear on the home page */
+.hero-bear { width: 190px; margin: 0 auto 6px; }
+
+/* floating guide */
+.guide { position: fixed; right: 12px; bottom: 10px; z-index: 40; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; pointer-events: none; }
+.guide > * { pointer-events: auto; }
+.guide.away { display: none; }
+.guide-bear { width: 84px; padding: 0; border: 0; background: none; cursor: pointer; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .18)); }
+.guide-bear:hover { transform: scale(1.05); }
+.guide-bubble { position: relative; max-width: 270px; background: #fff; border: 3px solid var(--green); border-radius: 18px; padding: 10px 14px; font-size: .95rem; line-height: 1.4; box-shadow: var(--shadow); margin-right: 8px; }
+.guide-bubble::after { content: ""; position: absolute; right: 40px; bottom: -13px; width: 20px; height: 20px; background: #fff; border-right: 3px solid var(--green); border-bottom: 3px solid var(--green); transform: rotate(45deg); }
+.guide-bubble[hidden] { display: none; }
+.guide-actions { display: flex; gap: 8px; margin-top: 8px; }
+.guide-actions button { font-family: inherit; font-size: .82rem; font-weight: 800; padding: 3px 10px; border-radius: 99px; border: 2px solid var(--green); background: var(--leaf); color: var(--green-dark); cursor: pointer; }
+.guide-actions button:last-child { background: #fff; border-color: var(--line); color: var(--muted); }
+.guide-show { position: fixed; right: 12px; bottom: 12px; z-index: 40; font-family: inherit; font-weight: 800; padding: 8px 16px; border-radius: 99px; border: 2px solid var(--green); background: #fff; color: var(--green-dark); cursor: pointer; box-shadow: var(--shadow); }
+.guide-show[hidden] { display: none; }
+
+body { padding-bottom: 20px; }
+.site-footer { padding-bottom: 120px; }
+
+/* on the games page the bear stays small and out of the way */
+body[data-page="games"] .guide-bear { width: 56px; }
+body[data-page="games"] .guide-bubble { pointer-events: none; max-width: 230px; }
+body[data-page="games"] .guide-actions { display: none; }
+
+@media (max-width: 600px) {
+  body[data-page="games"] .guide-bear { width: 48px; }
+  body[data-page="games"] .guide-bubble { max-width: 190px; font-size: .82rem; }
+  .guide-bear { width: 68px; }
+  .guide-bubble { max-width: 220px; font-size: .88rem; }
+  .hero-bear { width: 150px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bear, .bear.wave, .bear.cheer, .bear.oops, .bear.talking, .bear.big.wave { animation: none !important; }
+}
