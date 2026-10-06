@@ -13,9 +13,13 @@
   const RECENT_DAYS = 14; // "recent" = reported in the last two weeks
   const SOCAL_COUNTIES = ["imperial", "kern", "los angeles", "orange", "riverside", "san bernardino", "san diego", "san luis obispo", "santa barbara", "ventura"];
 
+  const HOME = { name: "Culver City", ll: [34.0211, -118.3965] };
+  const ACRES_PER_FIELD = 1.32; // one American football field, end zones included
+
+  /* active = new fire (last two weeks): orange flame.  recent = burned earlier this year: brown burn scar.  old = famous past fire: purple flame */
   const COLORS = {
     active: { stroke: "#FF3B1F", fill: "#FF7A1A" },
-    recent: { stroke: "#FF3B1F", fill: "#FF7A1A" },  /* same look as "active": one combined "fires this year" layer */
+    recent: { stroke: "#5C3A1A", fill: "#8B5A2B" },
     old: { stroke: "#E9A8FF", fill: "#B070D0" }
   };
 
@@ -48,7 +52,28 @@
     if (n === null || n === undefined || isNaN(n)) return "size not reported yet";
     n = Number(n);
     if (n < 1) return "size not updated yet (first reports are often tiny)";
-    return (n < 10 ? n.toFixed(1) : Math.round(n).toLocaleString()) + " acres";
+    return (n < 10 ? n.toFixed(1) : Math.round(n).toLocaleString()) + " acres (" + fields(n) + ")";
+  };
+  /* Acres mean little to kids, so we also say it in football fields */
+  const fields = n => {
+    const f = n / ACRES_PER_FIELD;
+    if (f < 1) return "smaller than a football field";
+    if (f < 1.5) return "about 1 football field";
+    const r = f < 100 ? Math.round(f) : f < 10000 ? Math.round(f / 10) * 10 : Math.round(f / 1000) * 1000;
+    return "about " + r.toLocaleString() + " football fields";
+  };
+  const shortSize = n => (n === null || n === undefined || isNaN(n) || n < 1) ? "size not known yet" : fields(Number(n));
+  /* Bigger fire = bigger mark on the map */
+  const markSize = (kind, n) => {
+    if (kind === "old") return 28;
+    if (!(n >= 10)) return 24;
+    return Math.round(Math.max(24, Math.min(56, 24 + 7 * Math.log10(n / 10))));
+  };
+  const milesFromHome = ll => {
+    const R = 3958.8, rad = d => d * Math.PI / 180;
+    const dLat = rad(ll[0] - HOME.ll[0]), dLng = rad(ll[1] - HOME.ll[1]);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(rad(HOME.ll[0])) * Math.cos(rad(ll[0])) * Math.sin(dLng / 2) ** 2;
+    return Math.round(2 * R * Math.asin(Math.sqrt(a)));
   };
   /* The national feed also holds many tiny dispatch reports with code names like LAC-355018 and old records nobody closed out.
      These helpers keep the map to real, recent, Southern California fires. */
@@ -64,7 +89,23 @@
     const d = new Date(typeof ms === "string" && isNaN(Number(ms)) ? ms : Number(ms));
     return isNaN(d) ? "" : d.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
   };
+  function scarIcon(size) {
+    const s = size || 28;
+    return L.divIcon({
+      className: "scar-icon",
+      iconSize: [s, s], iconAnchor: [s / 2, s / 2],
+      html: `<svg viewBox="0 0 40 40" width="${s}" height="${s}" aria-hidden="true"><path d="M20 3 C27 4 33 8 36 15 C39 22 36 30 30 35 C24 39 15 38 9 34 C3 29 2 21 5 14 C8 7 13 3 20 3Z" fill="#8B5A2B" stroke="#5C3A1A" stroke-width="2.5"/><path d="M20 30 L20 19" stroke="#7CD45B" stroke-width="3" stroke-linecap="round"/><path d="M20 22 C15 21 13 17 14 14 C18 14 20 17 20 22Z M20 20 C24 18 27 15 27 12 C23 12 20 15 20 20Z" fill="#7CD45B"/></svg>`
+    });
+  }
+  function homeIcon() {
+    return L.divIcon({
+      className: "home-icon",
+      iconSize: [34, 34], iconAnchor: [17, 17],
+      html: `<svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="#FFFFFF" stroke="#2E7D4F" stroke-width="3"/><path d="M10 21 L20 12 L30 21 M13 19 L13 29 L27 29 L27 19" fill="#FFC94A" stroke="#2E7D4F" stroke-width="2.5" stroke-linejoin="round"/><rect x="18" y="23" width="4" height="6" fill="#2E7D4F"/></svg>`
+    });
+  }
   function flameIcon(kind, size) {
+    if (kind === "recent") return scarIcon(size);
     const c = COLORS[kind];
     const s = size || 30;
     return L.divIcon({
@@ -81,7 +122,8 @@
   /* ---------- the info panel with animals ---------- */
   function kindLabel(f) {
     if (f.kind === "old") return "Famous past fire";
-    return f.rx ? "Planned burn this year" : "Fire this year";
+    if (f.kind === "recent") return f.rx ? "Planned burn earlier this year" : "Burned earlier this year: the land is healing";
+    return f.rx ? "Planned burn (last two weeks)" : "New fire (last two weeks)";
   }
   function showFire(f) {
     const center = f.ll;
@@ -94,8 +136,10 @@
       if (f.date) facts.push(`<span><strong>Started:</strong> ${esc(fmtDate(f.date))}</span>`);
       if (f.contained !== null && f.contained !== undefined && !isNaN(f.contained)) facts.push(`<span><strong>Contained:</strong> ${Math.round(f.contained)}%</span>`);
     } else {
-      facts.push(`<span><strong>Year:</strong> ${f.year}</span><span><strong>Size:</strong> ${esc(f.acres)} acres</span>`);
+      const num = Number(String(f.acres).replace(/[^\d.]/g, ""));
+      facts.push(`<span><strong>Year:</strong> ${f.year}</span><span><strong>Size:</strong> ${esc(f.acres)} acres${num ? " (" + esc(fields(num)) + ")" : ""}</span>`);
     }
+    facts.push(`<span><strong>Distance:</strong> about ${milesFromHome(f.ll)} miles from ${esc(HOME.name)}</span>`);
     const habBlocks = habs.map(h => `<div class="fire-hab"><h4>${esc(FIRE_HABITATS[h].name)}</h4><p>${esc(FIRE_HABITATS[h].fire)}</p></div>`).join("");
     panel.innerHTML = `
       <button class="btn ghost small fire-close" type="button" id="fire-close" aria-label="Close fire information">Close</button>
@@ -138,16 +182,39 @@
     if (poly) {
       L.geoJSON(poly, {
         bubblingMouseEvents: false,
-        style: { color: c.stroke, weight: f.kind === "old" ? 2 : 3, fillColor: c.fill, fillOpacity: f.kind === "old" ? .28 : .38, dashArray: null },
+        style: { color: c.stroke, weight: f.kind === "old" ? 2 : 3, fillColor: c.fill, fillOpacity: f.kind === "recent" ? .45 : f.kind === "old" ? .28 : .38, dashArray: null },
         onEachFeature: (ft, layer) => layer.on("click", e => { L.DomEvent.stopPropagation(e); showFire(f); })
       }).addTo(group);
     }
-    const m = L.marker(f.ll, { icon: flameIcon(f.kind, f.kind === "old" ? 28 : 32), title: f.name, keyboard: true, riseOnHover: true }).addTo(group);
-    m.bindTooltip(f.name, { direction: "top", offset: [0, -26] });
+    const s = markSize(f.kind, f.acres);
+    const m = L.marker(f.ll, { icon: flameIcon(f.kind, s), title: f.name, keyboard: true, riseOnHover: true }).addTo(group);
+    m.bindTooltip(f.name + (f.kind !== "old" && f.acres >= 1 ? ": " + fields(f.acres) : ""), { direction: "top", offset: [0, f.kind === "recent" ? -s / 2 : -s] });
     m.on("click", e => { showFire(f); });
+    if (f.kind !== "old") liveList.push(f);
   }
 
-  function clearLive() { groups.active.clearLayers(); groups.recent.clearLayers(); }
+  let liveList = [];
+  function clearLive() { groups.active.clearLayers(); groups.recent.clearLayers(); liveList = []; }
+
+  /* "Biggest fires this year" list: easier for kids than hunting for small marks on the map */
+  const topEl = document.getElementById("fire-top");
+  function showTopList() {
+    if (!topEl) return;
+    const top = liveList.filter(f => f.acres >= 1).sort((a, b) => b.acres - a.acres).slice(0, 5);
+    if (!top.length) { topEl.hidden = true; return; }
+    topEl.innerHTML = `<h3>Biggest fires this year</h3><p class="muted-note">Tap a fire to fly there and meet the animals.</p>
+      <ol class="fire-top-list">${top.map((f, i) => `<li><button type="button" class="fire-top-btn" data-i="${i}">
+        <span class="ftb-icon ftb-${f.kind}" aria-hidden="true"></span>
+        <span class="ftb-text"><strong>${esc(f.name)}</strong>${f.kind === "active" ? ` <span class="ftb-new">New!</span>` : ""}
+        <span class="ftb-sub">${esc(shortSize(f.acres))} &middot; ${milesFromHome(f.ll)} miles from ${esc(HOME.name)}</span></span>
+      </button></li>`).join("")}</ol>`;
+    topEl.hidden = false;
+    topEl.querySelectorAll(".fire-top-btn").forEach(b => b.addEventListener("click", () => {
+      const f = top[+b.dataset.i];
+      map.flyTo(f.ll, 11, { duration: 1.2 });
+      showFire(f);
+    }));
+  }
 
   function normalize(feature, kindHint) {
     const p = feature.properties || {};
@@ -250,17 +317,25 @@
         if (!inSoCal(f.state, f.county)) return;
         const ll = polyCenter(ft); if (!ll) return;
         f.ll = [ll.lat, ll.lng];
+        const age = ageDays(f.date);
+        if (age !== null && age <= RECENT_DAYS) f.kind = "active";   /* started in the last two weeks: still a flame */
         seen[f.id] = true;
-        addFire(f, ft); nRecent++;
+        addFire(f, ft);
+        if (f.kind === "active") nActive++; else nRecent++;
       });
+      showTopList();
       const t = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-      const total = nActive + nRecent;
-      setStatus(`<strong>Fire map updated at ${t}.</strong> Showing ${total} fire${total === 1 ? "" : "s"} from this year. Source: National Interagency Fire Center, checked every 10 minutes while this page is open. That feed can be hours behind and early sizes are often too small, so for the newest facts see <a href="${OFFICIAL}" target="_blank" rel="noopener">Cal Fire</a>. ${total === 0 ? "No fires were reported in Southern California. That is good news!" : ""}`, "ok");
+      setStatus(`<strong>Fire map updated at ${t}:</strong> ${nActive} new fire${nActive === 1 ? "" : "s"} and ${nRecent} burn scar${nRecent === 1 ? "" : "s"} from earlier this year. Source: National Interagency Fire Center, checked every 10 minutes while this page is open. That feed can be hours behind and early sizes are often too small, so for the newest facts see <a href="${OFFICIAL}" target="_blank" rel="noopener">Cal Fire</a>. ${nActive + nRecent === 0 ? "No fires were reported in Southern California. That is good news!" : ""}`, "ok");
     }).catch(() => {
       clearLive();
+      if (topEl) topEl.hidden = true;
       setStatus(`We could not reach the live fire map right now. Maybe the internet is off, or the fire service is busy. You can still click the purple flames for famous past fires. For today&rsquo;s fires, check the <a href="${OFFICIAL}" target="_blank" rel="noopener">official Cal Fire map</a>.`, "warn");
     }).then(() => { if (refreshBtn) refreshBtn.disabled = false; });
   }
+
+  /* ---------- home pin, so kids can see how far away each fire is ---------- */
+  L.marker(HOME.ll, { icon: homeIcon(), title: "Home: " + HOME.name, keyboard: false, zIndexOffset: 1000 })
+    .addTo(map).bindTooltip("Home: " + HOME.name, { permanent: true, direction: "right", offset: [16, 0], className: "home-label" });
 
   /* ---------- famous past fires ---------- */
   OLD_FIRES.forEach(o => addFire({ id: "old-" + o.name, name: o.name, kind: "old", year: o.year, acres: o.acres, ll: o.ll, text: o.text }, null));
