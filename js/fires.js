@@ -97,11 +97,13 @@
       html: `<svg viewBox="0 0 40 40" width="${s}" height="${s}" aria-hidden="true"><path d="M20 3 C27 4 33 8 36 15 C39 22 36 30 30 35 C24 39 15 38 9 34 C3 29 2 21 5 14 C8 7 13 3 20 3Z" fill="#8B5A2B" stroke="#5C3A1A" stroke-width="2.5"/><path d="M20 30 L20 19" stroke="#7CD45B" stroke-width="3" stroke-linecap="round"/><path d="M20 22 C15 21 13 17 14 14 C18 14 20 17 20 22Z M20 20 C24 18 27 15 27 12 C23 12 20 15 20 20Z" fill="#7CD45B"/></svg>`
     });
   }
+  /* El Rincon Rockets: a red rocket pin for our school (an original drawing in the mascot's colors) */
+  const ROCKET_SVG = (w) => `<svg viewBox="0 0 40 40" width="${w}" height="${w}" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="#1E2A4A" stroke="#FFFFFF" stroke-width="2"/><circle cx="11" cy="30" r="3.2" fill="#E8EEF5"/><circle cx="7.5" cy="33" r="2.4" fill="#E8EEF5"/><circle cx="14" cy="33" r="2" fill="#E8EEF5"/><circle cx="29" cy="9" r=".9" fill="#FFFFFF"/><circle cx="33" cy="16" r=".7" fill="#FFFFFF"/><circle cx="9" cy="12" r=".7" fill="#FFFFFF"/><g transform="rotate(45 20 20)"><path d="M17.6 25 L20 31 L22.4 25Z" fill="#FFC94A"/><path d="M16.3 19.5 L12 26.5 L16.3 25Z M23.7 19.5 L28 26.5 L23.7 25Z" fill="#4FA8D8" stroke="#1E2A4A" stroke-width=".8"/><path d="M20 5.5 C24.2 9.5 25.2 16 24 25 L16 25 C14.8 16 15.8 9.5 20 5.5Z" fill="#E23B3B" stroke="#FFFFFF" stroke-width="1"/><circle cx="20" cy="15" r="2.7" fill="#9FD8F5" stroke="#1E2A4A" stroke-width="1"/></g></svg>`;
   function schoolIcon() {
     return L.divIcon({
       className: "home-icon",
-      iconSize: [38, 38], iconAnchor: [19, 19],
-      html: `<svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="#FFFFFF" stroke="#2E7D4F" stroke-width="3"/><path d="M20 10 L20 4" stroke="#2E7D4F" stroke-width="1.5"/><path d="M20 4 L26 5.6 L20 7.2Z" fill="#FFC94A" stroke="#C98A00" stroke-width=".6"/><rect x="17" y="10" width="6" height="6" fill="#E2574C" stroke="#8E2A12" stroke-width="1"/><path d="M7.5 21.5 L20 14 L32.5 21.5Z" fill="#8E2A12"/><rect x="10" y="21" width="20" height="10" fill="#E2574C" stroke="#8E2A12" stroke-width="1.5"/><rect x="18" y="24.5" width="4" height="6.5" fill="#FFFFFF"/><rect x="12.3" y="23.3" width="3.4" height="3.4" fill="#FFFFFF"/><rect x="24.3" y="23.3" width="3.4" height="3.4" fill="#FFFFFF"/></svg>`
+      iconSize: [42, 42], iconAnchor: [21, 21],
+      html: ROCKET_SVG(42)
     });
   }
   function flameIcon(kind, size) {
@@ -335,7 +337,7 @@
 
   /* ---------- school pin, so kids can see how far away each fire is ---------- */
   L.marker(HOME.ll, { icon: schoolIcon(), title: "Our school: " + HOME.name, keyboard: false, zIndexOffset: 1000 })
-    .addTo(map).bindTooltip("Our school: " + HOME.name, { permanent: true, direction: "right", offset: [16, 0], className: "home-label" });
+    .addTo(map).bindTooltip("Our school: El Rincon Rockets!", { permanent: true, direction: "right", offset: [16, 0], className: "home-label" });
 
   /* ---------- famous past fires ---------- */
   OLD_FIRES.forEach(o => addFire({ id: "old-" + o.name, name: o.name, kind: "old", year: o.year, acres: o.acres, ll: o.ll, text: o.text }, null));
