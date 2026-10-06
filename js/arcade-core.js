@@ -141,9 +141,14 @@ Arcade.bully = (function () {
     stop(); st = null;
     const best = store.get("ohe-best-bully", 0);
     root().innerHTML = `<div class="final">
-      <div class="arcade-icon">&#128296;</div>
+      <div class="arcade-icon">&#129508;</div>
       <h2>Bully Buster</h2>
-      <p>Plant bullies pop out of the ground! <strong>Tap the bullies</strong> (red rings). <strong>Don&rsquo;t tap plant friends</strong> (green rings). You have 3 hearts and 60 seconds. Hit several in a row to build a combo! Every so often Cali asks a question. <strong>Answer right to win a heart back!</strong></p>
+      <p class="bb-lead">Plant bullies are taking over the garden. <strong>Pull them out!</strong></p>
+      <div class="bb-howto">
+        <div class="bb-card bully"><span class="face" aria-hidden="true">&#128544;</span><strong>Plant bully</strong><span>Red and grumpy.<br><b>TAP to pull it out!</b></span></div>
+        <div class="bb-card friend"><span class="face" aria-hidden="true">&#128578;</span><strong>Plant friend</strong><span>Green and happy.<br><b>Leave it alone!</b></span></div>
+      </div>
+      <p>You have 3 hearts and 60 seconds. Pull several bullies in a row for a combo! Every so often Cali asks a question. <strong>Answer right to win a heart back!</strong></p>
       <p class="bestline">Best score: <strong>${best}</strong></p>
       <button class="btn" id="bb-play">Play</button></div>`;
     $("#bb-play").addEventListener("click", start);
@@ -152,19 +157,36 @@ Arcade.bully = (function () {
   function start() {
     stop();
     const holes = 9;
-    st = { score: 0, lives: 3, time: 60, combo: 0, maxCombo: 0, moles: new Array(holes).fill(null), busted: {}, friends: {}, nextSpawn: 500, over: false, sinceQ: 0, nextQ: 18, qRight: 0, qTotal: 0 };
+    st = { score: 0, lives: 3, time: 60, combo: 0, maxCombo: 0, moles: new Array(holes).fill(null), busted: {}, friends: {}, nextSpawn: 500, over: false, sinceQ: 0, nextQ: 18, qRight: 0, qTotal: 0, hinted: false };
     root().innerHTML = `
       <div class="hud"><span>Score <strong id="bb-score">0</strong></span><span>Time <strong id="bb-time">60</strong></span><span class="lives" id="bb-lives" aria-label="Hearts left"></span><span>Combo <strong id="bb-combo">0</strong></span></div>
+      <p class="bb-rule" aria-hidden="true"><span class="r-bully">&#128544; Pull out the bullies</span><span class="r-friend">&#128578; Leave the friends</span></p>
       <div class="hole-grid" id="bb-grid">${Array.from({ length: holes }, (_, i) =>
         `<button class="hole" data-i="${i}" aria-label="Hole ${i + 1}"><span class="dirt"></span><span class="mole" id="mole-${i}"></span></button>`).join("")}</div>
       <p class="bb-msg" id="bb-msg" role="status" aria-live="polite">Go go go!</p>`;
     $("#bb-grid").addEventListener("click", onTap);
     loop = setInterval(tick, 100);
     draw();
-    bear.say("Tap the bullies! Leave the plant friends alone.", { stay: 3500 });
+    bear.say("Pull out the grumpy red bullies! Leave the happy green friends.", { stay: 3500 });
   }
 
   function setMsg(t) { const m = $("#bb-msg"); if (m) m.textContent = t; }
+  /* little floating words over a hole, like "Pulled!" */
+  function popText(i, text, kind) {
+    const hole = document.querySelector('.hole[data-i="' + i + '"]');
+    if (!hole) return;
+    const t = document.createElement("span");
+    t.className = "pop-txt " + kind; t.textContent = text;
+    hole.appendChild(t);
+    setTimeout(() => t.remove(), 900);
+  }
+  /* after a bully is pulled, a little native sprout pops up in its place */
+  function sprout(i) {
+    const hole = document.querySelector('.hole[data-i="' + i + '"]');
+    if (!hole) return;
+    hole.classList.add("sprouted");
+    setTimeout(() => hole.classList.remove("sprouted"), 900);
+  }
 
   function draw() {
     if (!st) return;
@@ -194,21 +216,24 @@ Arcade.bully = (function () {
     const free = st.moles.map((m, i) => (m ? -1 : i)).filter(i => i >= 0);
     if (!free.length) return;
     const i = rnd(free);
-    const isBully = Math.random() < 0.65;
+    const hint = !st.hinted;                 /* the very first plant is a bully with a pointing hand */
+    const isBully = hint || Math.random() < 0.65;
     const p = rnd(isBully ? bullies() : natives());
     const m = { p, bully: isBully, hit: false, timer: null };
-    m.timer = setTimeout(() => leave(i), 1250 - 600 * prog);
+    m.timer = setTimeout(() => leave(i), hint ? 3000 : 1250 - 600 * prog);
+    st.hinted = true;
     st.moles[i] = m;
     const el = $("#mole-" + i);
-    el.className = "mole up " + (isBully ? "is-bully" : "is-friend");
-    el.innerHTML = plantPic(p, 78) + `<span class="mole-name">${p.name}</span>`;
+    el.className = "mole up " + (isBully ? "is-bully" : "is-friend") + (hint ? " hint" : "");
+    el.innerHTML = plantPic(p, 78) + `<span class="mole-face" aria-hidden="true">${isBully ? "&#128544;" : "&#128578;"}</span>` +
+      `<span class="mole-name">${isBully ? "Bully: " : "Friend: "}${p.name}</span>` + (hint ? `<span class="mole-hint" aria-hidden="true">&#128070; Tap!</span>` : "");
     sfx.pop();
   }
 
   function leave(i) {
     const m = st && st.moles[i];
     if (!m) return;
-    if (m.bully && !m.hit) { st.combo = 0; setMsg(m.p.name + " got away!"); }
+    if (m.bully && !m.hit) { st.combo = 0; setMsg(m.p.name + " got away and will spread! Tap the grumpy red ones fast."); }
     st.moles[i] = null;
     const el = $("#mole-" + i);
     if (el) el.className = "mole";
@@ -227,14 +252,17 @@ Arcade.bully = (function () {
       st.score += 10 * (1 + Math.floor(st.combo / 5));
       st.busted[m.p.id] = m.p;
       el.className = "mole up hit-good";
-      setMsg("Busted! " + m.p.name + ": " + m.p.fact);
+      popText(i, "Pulled!", "good");
+      sprout(i);
+      setMsg("Pulled out! " + m.p.name + ": " + m.p.fact);
       sfx.good();
       if (st.combo % 5 === 0) { bear.cheer(st.combo + " in a row! Bully buster!"); sfx.great(); }
     } else {
       st.lives--; st.combo = 0;
       st.friends[m.p.id] = m.p;
       el.className = "mole up hit-bad";
-      setMsg("Oops! " + m.p.name + " is a plant friend.");
+      popText(i, "Ouch! I'm a friend!", "bad");
+      setMsg("Oops! " + m.p.name + " is a plant friend. Leave the happy green ones in the ground.");
       sfx.bad();
       bear.oops("Oops! " + m.p.name + " is a native plant friend. Don't tap those!");
     }
@@ -242,7 +270,7 @@ Arcade.bully = (function () {
       if (st && st.moles[i] === m) st.moles[i] = null;
       const e2 = $("#mole-" + i);
       if (e2) e2.className = "mole";
-    }, 260);
+    }, 420);
     draw();
     if (st.lives <= 0) end();
   }
@@ -260,8 +288,8 @@ Arcade.bully = (function () {
       <h2>${isNew && st.score > 0 ? "New high score!" : st.score >= 200 ? "Bully-busting champion!" : "Nice try!"}</h2>
       <p>Best combo: <strong>${st.maxCombo}</strong> in a row. Best score: <strong>${Math.max(prevBest, st.score)}</strong></p>
       ${st.qTotal ? `<p><strong>Heart Rescue questions:</strong> ${st.qRight} of ${st.qTotal} right</p>` : ""}
-      <p><strong>Bullies you busted:</strong> ${names(st.busted)}</p>
-      <p><strong>Plant friends you tapped:</strong> ${names(st.friends)}</p>
+      <p><strong>Bullies you pulled out:</strong> ${names(st.busted)}</p>
+      <p><strong>Plant friends you tapped by mistake:</strong> ${names(st.friends)}</p>
       <button class="btn" id="bb-again">Play again</button></div>`;
     $("#bb-again").addEventListener("click", start);
     $("#bb-again").focus();
