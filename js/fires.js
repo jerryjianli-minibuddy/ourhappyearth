@@ -66,8 +66,8 @@
   /* Bigger fire = bigger mark on the map */
   const markSize = (kind, n) => {
     if (kind === "old") return 28;
-    if (!(n >= 10)) return 24;
-    return Math.round(Math.max(24, Math.min(56, 24 + 7 * Math.log10(n / 10))));
+    if (!(n >= 10)) return 22;
+    return Math.round(Math.max(22, Math.min(72, 22 + 12 * Math.log10(n / 10))));   /* 100 acres = 34px, 1,000 = 46px, 10,000+ = 58px or more */
   };
   const milesFromHome = ll => {
     const R = 3958.8, rad = d => d * Math.PI / 180;
