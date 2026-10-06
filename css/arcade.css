@@ -111,3 +111,32 @@
 .qpop .q-text { font-size: 1.2rem; text-align: center; }
 .qpop-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .qpop-actions [data-go] { margin-left: auto; }
+.qpop-actions { margin-top: 12px; }
+
+/* Bully Buster: make "pull out the bullies" obvious without reading */
+.bb-lead { font-size: 1.1rem; }
+.bb-howto { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 420px; margin: 10px auto 14px; }
+.bb-card { display: flex; flex-direction: column; align-items: center; gap: 4px; border-radius: 16px; padding: 12px 10px; border: 3px solid; text-align: center; font-size: .95rem; }
+.bb-card .face { font-size: 2.4rem; line-height: 1; }
+.bb-card.bully { background: #FFE3E3; border-color: #D6334B; color: #7A1424; }
+.bb-card.friend { background: #DDF5E3; border-color: #2E9A55; color: #1F5C38; }
+.bb-rule { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 14px; max-width: 480px; margin: 0 auto 10px; font-weight: 800; }
+.bb-rule span { border-radius: 99px; padding: 4px 12px; }
+.bb-rule .r-bully { background: #FFE3E3; color: #7A1424; border: 2px solid #D6334B; }
+.bb-rule .r-friend { background: #DDF5E3; color: #1F5C38; border: 2px solid #2E9A55; }
+.mole-face { position: absolute; top: -4px; right: 10%; font-size: 1.6rem; line-height: 1; filter: drop-shadow(0 1px 1px rgba(0,0,0,.35)); }
+.mole.is-bully .mole-name { background: #D6334B; color: #fff; }
+.mole.is-friend .mole-name { background: #2E9A55; color: #fff; }
+.mole.up.is-bully { animation: bully-wiggle .5s ease-in-out infinite alternate; }
+@keyframes bully-wiggle { from { transform: translate(-50%, 0) rotate(-4deg); } to { transform: translate(-50%, 0) rotate(4deg); } }
+.mole.hit-good { animation: yank .42s ease-in forwards; }
+@keyframes yank { 0% { transform: translate(-50%, 0) rotate(0); } 30% { transform: translate(-50%, 8%) rotate(-6deg); } 100% { transform: translate(-50%, -140%) rotate(25deg); opacity: 0; } }
+.mole-hint { position: absolute; top: -4px; left: 4%; background: #FFC94A; color: #1F3A2B; font-weight: 800; font-size: .85rem; border-radius: 99px; padding: 2px 10px; white-space: nowrap; animation: hint-bob .6s ease-in-out infinite alternate; }
+@keyframes hint-bob { from { margin-bottom: 0; } to { margin-bottom: 6px; } }
+.pop-txt { position: absolute; left: 50%; top: 18%; transform: translateX(-50%); font-weight: 800; font-size: .95rem; white-space: nowrap; padding: 2px 10px; border-radius: 99px; pointer-events: none; animation: pop-up .9s ease-out forwards; z-index: 2; }
+.pop-txt.good { background: #2E9A55; color: #fff; }
+.pop-txt.bad { background: #D6334B; color: #fff; }
+@keyframes pop-up { from { opacity: 1; margin-top: 0; } to { opacity: 0; margin-top: -30px; } }
+.hole.sprouted::after { content: "\1F331"; position: absolute; left: 50%; bottom: 16%; transform: translateX(-50%); font-size: 2rem; animation: sprout-in .9s ease-out; }
+@keyframes sprout-in { 0% { opacity: 0; transform: translate(-50%, 30%) scale(.4); } 30% { opacity: 1; transform: translate(-50%, 0) scale(1); } 85% { opacity: 1; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .mole.up.is-bully, .mole-hint { animation: none; } }
