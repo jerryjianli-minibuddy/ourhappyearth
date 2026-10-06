@@ -45,7 +45,7 @@ window.AC = (function () {
   }
   /* "Heart Rescue" pop-up question.
      panel: the game panel element to cover. opts.full: hearts already full (bonus points instead).
-     opts.onDone(true | false | null): true = right, false = wrong, null = skipped. */
+     opts.onDone(true | false): true = right, false = wrong. There is no Skip: kids must answer. */
   let qOverlay = null;
   function closeQuestion() {
     if (qOverlay) { qOverlay.remove(); qOverlay = null; }
@@ -57,16 +57,16 @@ window.AC = (function () {
     overlay.className = "qpop";
     overlay.setAttribute("role", "dialog");
     overlay.setAttribute("aria-modal", "true");
-    overlay.setAttribute("aria-label", opts.full ? "Bonus question" : "Heart Rescue question");
+    overlay.setAttribute("aria-label", opts.final ? "Final question" : opts.full ? "Bonus question" : "Heart Rescue question");
     const pl = item.pic ? PLANTS.find(p => p.id === item.pic) : null;
     overlay.innerHTML = `<div class="qpop-box">
-      <div class="qpop-head">${opts.full ? "&#11088; Bonus question!" : "&#10084;&#65039; Heart Rescue!"}</div>
-      <p class="qpop-sub">${opts.full ? "Your hearts are full. Answer right to win 50 bonus points." : "Answer right to win a heart back."}</p>
+      <div class="qpop-head">${opts.final ? "&#127942; Final question!" : opts.full ? "&#11088; Bonus question!" : "&#10084;&#65039; Heart Rescue!"}</div>
+      <p class="qpop-sub">${opts.final ? "Answer right to win 50 bonus points." : opts.full ? "Your hearts are full. Answer right to win 50 bonus points." : "Answer right to win a heart back."}</p>
       ${pl ? `<div class="q-pic">${plantPic(pl, 110)}</div>` : ""}
       <p class="q-text">${item.q}</p>
       <div class="options">${item.opts.map((o, i) => `<button type="button" class="opt" data-i="${i}">${o.text}</button>`).join("")}</div>
       <div class="feedback" role="status" aria-live="polite"></div>
-      <div class="qpop-actions"><button type="button" class="btn ghost small" data-skip>Skip</button><button type="button" class="btn" data-go hidden>Back to the game</button></div>
+      <div class="qpop-actions"><button type="button" class="btn" data-go hidden>${opts.final ? "See my score" : "Back to the game"}</button></div>
     </div>`;
     panel.appendChild(overlay);
     qOverlay = overlay;
@@ -82,18 +82,11 @@ window.AC = (function () {
       const fb = overlay.querySelector(".feedback");
       fb.className = "feedback show " + (ok ? "good" : "bad");
       fb.textContent = (ok ? "Correct! " : "Not quite. ") + item.why;
-      overlay.querySelector("[data-skip]").hidden = true;
       const go = overlay.querySelector("[data-go]");
       go.hidden = false;
       go.focus();
       go.addEventListener("click", () => { closeQuestion(); opts.onDone(ok); });
     }));
-    overlay.querySelector("[data-skip]").addEventListener("click", () => {
-      if (done) return;
-      done = true;
-      closeQuestion();
-      opts.onDone(null);
-    });
     const first = overlay.querySelector(".opt");
     if (first) first.focus();
   }
@@ -518,23 +511,38 @@ Arcade.catch = (function () {
     ctx.globalAlpha = 1;
   }
 
+  /* The game is over: everyone answers one final question first (right = +50 points), then the score screen */
   function end() {
     if (!st || st.over) return;
     st.over = true;
     stop();
+    const s = st;
+    bear.say("One last question! Answer right for 50 bonus points.", { stay: 3000 });
+    AC.askQuestion(root(), {
+      final: true,
+      onDone: ok => {
+        if (ok !== null) s.qTotal++;
+        if (ok === true) { s.qRight++; s.score += 50; }
+        showFinal(s, ok);
+      }
+    });
+  }
+
+  function showFinal(s, finalOk) {
     const prevBest = store.get("ohe-best-catch", 0);
-    const isNew = st.score > prevBest;
-    if (isNew) store.set("ohe-best-catch", st.score);
-    const flowers = st.flowers.length;
+    const isNew = s.score > prevBest;
+    if (isNew) store.set("ohe-best-catch", s.score);
+    const flowers = s.flowers.length;
     root().innerHTML = `<div class="final">
-      <p class="big">${st.score}</p>
-      <h2>${isNew && st.score > 0 ? "New high score!" : "Game over"}</h2>
-      <p>You grew <strong>${flowers}</strong> flower${flowers === 1 ? "" : "s"} in your garden. Best score: <strong>${Math.max(prevBest, st.score)}</strong></p>
-      ${st.qTotal ? `<p><strong>Heart Rescue questions:</strong> ${st.qRight} of ${st.qTotal} right</p>` : ""}
+      <p class="big">${s.score}</p>
+      <h2>${isNew && s.score > 0 ? "New high score!" : "Game over"}</h2>
+      <p>You grew <strong>${flowers}</strong> flower${flowers === 1 ? "" : "s"} in your garden. Best score: <strong>${Math.max(prevBest, s.score)}</strong></p>
+      ${finalOk === true ? `<p><strong>Final question right: +50 bonus points!</strong></p>` : ""}
+      ${s.qTotal ? `<p><strong>Questions:</strong> ${s.qRight} of ${s.qTotal} right</p>` : ""}
       <button class="btn" id="sc-again">Play again</button></div>`;
     $("#sc-again").addEventListener("click", start);
     $("#sc-again").focus();
-    if (isNew && st.score > 0) bear.cheer("New high score! Your garden looks amazing!");
+    if (isNew && s.score > 0) bear.cheer("New high score! Your garden looks amazing!");
     else bear.say("Nice garden! Try again to grow even more flowers.", { stay: 4000 });
   }
 
