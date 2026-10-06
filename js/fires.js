@@ -13,7 +13,7 @@
   const RECENT_DAYS = 14; // "recent" = reported in the last two weeks
   const SOCAL_COUNTIES = ["imperial", "kern", "los angeles", "orange", "riverside", "san bernardino", "san diego", "san luis obispo", "santa barbara", "ventura"];
 
-  const HOME = { name: "Culver City", ll: [34.0211, -118.3965] };
+  const HOME = { name: "El Rincon Elementary", short: "our school", ll: [33.9913, -118.3912] };  /* 11177 Overland Ave, Culver City */
   const ACRES_PER_FIELD = 1.32; // one American football field, end zones included
 
   /* active = new fire (last two weeks): orange flame.  recent = burned earlier this year: brown burn scar.  old = famous past fire: purple flame */
@@ -97,11 +97,11 @@
       html: `<svg viewBox="0 0 40 40" width="${s}" height="${s}" aria-hidden="true"><path d="M20 3 C27 4 33 8 36 15 C39 22 36 30 30 35 C24 39 15 38 9 34 C3 29 2 21 5 14 C8 7 13 3 20 3Z" fill="#8B5A2B" stroke="#5C3A1A" stroke-width="2.5"/><path d="M20 30 L20 19" stroke="#7CD45B" stroke-width="3" stroke-linecap="round"/><path d="M20 22 C15 21 13 17 14 14 C18 14 20 17 20 22Z M20 20 C24 18 27 15 27 12 C23 12 20 15 20 20Z" fill="#7CD45B"/></svg>`
     });
   }
-  function homeIcon() {
+  function schoolIcon() {
     return L.divIcon({
       className: "home-icon",
-      iconSize: [34, 34], iconAnchor: [17, 17],
-      html: `<svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="#FFFFFF" stroke="#2E7D4F" stroke-width="3"/><path d="M10 21 L20 12 L30 21 M13 19 L13 29 L27 29 L27 19" fill="#FFC94A" stroke="#2E7D4F" stroke-width="2.5" stroke-linejoin="round"/><rect x="18" y="23" width="4" height="6" fill="#2E7D4F"/></svg>`
+      iconSize: [38, 38], iconAnchor: [19, 19],
+      html: `<svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="#FFFFFF" stroke="#2E7D4F" stroke-width="3"/><path d="M20 10 L20 4" stroke="#2E7D4F" stroke-width="1.5"/><path d="M20 4 L26 5.6 L20 7.2Z" fill="#FFC94A" stroke="#C98A00" stroke-width=".6"/><rect x="17" y="10" width="6" height="6" fill="#E2574C" stroke="#8E2A12" stroke-width="1"/><path d="M7.5 21.5 L20 14 L32.5 21.5Z" fill="#8E2A12"/><rect x="10" y="21" width="20" height="10" fill="#E2574C" stroke="#8E2A12" stroke-width="1.5"/><rect x="18" y="24.5" width="4" height="6.5" fill="#FFFFFF"/><rect x="12.3" y="23.3" width="3.4" height="3.4" fill="#FFFFFF"/><rect x="24.3" y="23.3" width="3.4" height="3.4" fill="#FFFFFF"/></svg>`
     });
   }
   function flameIcon(kind, size) {
@@ -139,7 +139,7 @@
       const num = Number(String(f.acres).replace(/[^\d.]/g, ""));
       facts.push(`<span><strong>Year:</strong> ${f.year}</span><span><strong>Size:</strong> ${esc(f.acres)} acres${num ? " (" + esc(fields(num)) + ")" : ""}</span>`);
     }
-    facts.push(`<span><strong>Distance:</strong> about ${milesFromHome(f.ll)} miles from ${esc(HOME.name)}</span>`);
+    facts.push(`<span><strong>Distance:</strong> about ${milesFromHome(f.ll)} miles from ${esc(HOME.short)} (${esc(HOME.name)})</span>`);
     const habBlocks = habs.map(h => `<div class="fire-hab"><h4>${esc(FIRE_HABITATS[h].name)}</h4><p>${esc(FIRE_HABITATS[h].fire)}</p></div>`).join("");
     panel.innerHTML = `
       <button class="btn ghost small fire-close" type="button" id="fire-close" aria-label="Close fire information">Close</button>
@@ -206,7 +206,7 @@
       <ol class="fire-top-list">${top.map((f, i) => `<li><button type="button" class="fire-top-btn" data-i="${i}">
         <span class="ftb-icon ftb-${f.kind}" aria-hidden="true"></span>
         <span class="ftb-text"><strong>${esc(f.name)}</strong>${f.kind === "active" ? ` <span class="ftb-new">New!</span>` : ""}
-        <span class="ftb-sub">${esc(shortSize(f.acres))} &middot; ${milesFromHome(f.ll)} miles from ${esc(HOME.name)}</span></span>
+        <span class="ftb-sub">${esc(shortSize(f.acres))} &middot; ${milesFromHome(f.ll)} miles from ${esc(HOME.short)}</span></span>
       </button></li>`).join("")}</ol>`;
     topEl.hidden = false;
     topEl.querySelectorAll(".fire-top-btn").forEach(b => b.addEventListener("click", () => {
@@ -333,9 +333,9 @@
     }).then(() => { if (refreshBtn) refreshBtn.disabled = false; });
   }
 
-  /* ---------- home pin, so kids can see how far away each fire is ---------- */
-  L.marker(HOME.ll, { icon: homeIcon(), title: "Home: " + HOME.name, keyboard: false, zIndexOffset: 1000 })
-    .addTo(map).bindTooltip("Home: " + HOME.name, { permanent: true, direction: "right", offset: [16, 0], className: "home-label" });
+  /* ---------- school pin, so kids can see how far away each fire is ---------- */
+  L.marker(HOME.ll, { icon: schoolIcon(), title: "Our school: " + HOME.name, keyboard: false, zIndexOffset: 1000 })
+    .addTo(map).bindTooltip("Our school: " + HOME.name, { permanent: true, direction: "right", offset: [16, 0], className: "home-label" });
 
   /* ---------- famous past fires ---------- */
   OLD_FIRES.forEach(o => addFire({ id: "old-" + o.name, name: o.name, kind: "old", year: o.year, acres: o.acres, ll: o.ll, text: o.text }, null));
