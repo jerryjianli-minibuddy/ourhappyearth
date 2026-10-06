@@ -35,13 +35,20 @@
 <label><input type="checkbox" data-fire-layer="old" checked> <span class="dot dot-old"></span> Famous past fires</label>
 <button class="btn ghost small" id="fire-refresh" type="button">Refresh fires</button>
 </div>
-<p class="muted-note"><strong>Fires this year</strong> (orange flames) are fires in Southern California since January 1 that burned 100 acres or more, plus smaller fires from the last two weeks. <strong>Famous past fires</strong> (purple flames) are big fires from earlier years.</p>
+<ul class="fire-legend" aria-label="Map key">
+<li><span class="lg lg-flame" aria-hidden="true"></span> <strong>New fire</strong> (started in the last two weeks)</li>
+<li><span class="lg lg-scar" aria-hidden="true"></span> <strong>Burn scar</strong> (burned earlier this year, now healing)</li>
+<li><span class="lg lg-old" aria-hidden="true"></span> <strong>Famous past fire</strong> (big fire from an earlier year)</li>
+<li><span class="lg lg-home" aria-hidden="true"></span> <strong>Home</strong> (Culver City)</li>
+<li class="lg-note">Bigger mark = bigger fire.</li>
+</ul>
 <div id="map" role="application" aria-label="Interactive satellite map of Southern California"></div>
 <div class="map-note">
 <label><input type="checkbox" id="map-wheel"> Zoom with my mouse wheel</label>
 <button class="btn ghost" id="pin-clear" type="button">Remove my pins</button>
 </div>
 <p class="fire-status" id="fire-status" role="status" aria-live="polite">Looking for fires&hellip;</p>
+<section class="fire-top" id="fire-top" aria-label="Biggest fires this year" hidden></section>
 <p><strong>Click a flame or a burned area</strong> to meet the animals that might live there and learn how fire changes their home.</p>
 <section class="fire-panel" id="fire-panel" aria-live="polite" hidden></section>
 <p><strong>Make your own pin:</strong> Click or tap anywhere on the map to mark a place you want to study. Your pins stay on this computer.</p>
