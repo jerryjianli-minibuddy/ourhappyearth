@@ -22,17 +22,6 @@
   sat.addTo(map);
   L.control.layers({ "Satellite view": sat, "Street map": street }, null, { collapsed: false }).addTo(map);
 
-  /* Explore spots: approximate areas to study, NOT places we say need planting */
-  const SPOTS = [
-    { name: "Ballona Wetlands area", ll: [33.969, -118.437], note: "A wetland near the coast, close to Culver City. Zoom in to see what the land looks like." },
-    { name: "Santa Monica Mountains", ll: [34.09, -118.65], note: "Lots of wild hills here. Look for the different colors of plants from above." },
-    { name: "Griffith Park", ll: [34.1366, -118.2942], note: "A huge park in the middle of the city. Can you find wild areas and built-up areas?" },
-    { name: "Los Angeles River", ll: [34.095, -118.257], note: "A river that runs through the city. Rivers are home to wetland plants and animals." }
-  ];
-  SPOTS.forEach(s => {
-    L.marker(s.ll).addTo(map).bindPopup(`<strong>${s.name}</strong><br>${s.note}<br><em>(approximate spot)</em>`);
-  });
-
   /* Your own pins, saved only in this browser */
   const KEY = "ohe-pins-v1";
   let pins = [];
