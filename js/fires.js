@@ -15,7 +15,7 @@
 
   const COLORS = {
     active: { stroke: "#FF3B1F", fill: "#FF7A1A" },
-    recent: { stroke: "#FFD23F", fill: "#E8A33A" },
+    recent: { stroke: "#FF3B1F", fill: "#FF7A1A" },  /* same look as "active": one combined "fires this year" layer */
     old: { stroke: "#E9A8FF", fill: "#B070D0" }
   };
 
@@ -68,7 +68,7 @@
     const c = COLORS[kind];
     const s = size || 30;
     return L.divIcon({
-      className: "flame-icon" + (kind === "active" ? " pulse" : ""),
+      className: "flame-icon",
       iconSize: [s, s], iconAnchor: [s / 2, s - 2],
       html: `<svg viewBox="0 0 32 40" width="${s}" height="${s * 1.25}" aria-hidden="true"><path d="M16 2 C18 10 28 14 28 25 C28 33 22 38 16 38 C10 38 4 33 4 25 C4 19 8 16 10 12 C11 16 13 17 14 17 C14 11 14 6 16 2Z" fill="${c.fill}" stroke="${c.stroke}" stroke-width="2.5"/><path d="M16 20 C19 24 21 26 21 30 C21 33 19 35 16 35 C13 35 11 33 11 30 C11 26 14 24 16 20Z" fill="#FFE27A"/></svg>`
     });
@@ -80,9 +80,8 @@
 
   /* ---------- the info panel with animals ---------- */
   function kindLabel(f) {
-    if (f.kind === "active") return f.rx ? "Planned burn (last two weeks)" : "Recent fire (last two weeks)";
-    if (f.kind === "recent") return f.rx ? "Planned burn earlier this year" : "Burned earlier this year";
-    return "Famous past fire";
+    if (f.kind === "old") return "Famous past fire";
+    return f.rx ? "Planned burn this year" : "Fire this year";
   }
   function showFire(f) {
     const center = f.ll;
@@ -104,7 +103,7 @@
       <h3>${esc(f.name)}</h3>
       <p class="fire-facts">${facts.join("")}</p>
       ${f.text ? `<p>${esc(f.text)}</p>` : ""}
-      ${f.kind === "active" ? `<p class="fire-safety">If you are ever near a fire, listen to grown-ups and local officials. Wildfires can be dangerous. Check the official map: <a href="${OFFICIAL}" target="_blank" rel="noopener">Cal Fire incidents</a>.</p>` : ""}
+      ${f.kind !== "old" ? `<p class="fire-safety">If you are ever near a fire, listen to grown-ups and local officials. Wildfires can be dangerous. Check the official map: <a href="${OFFICIAL}" target="_blank" rel="noopener">Cal Fire incidents</a>.</p>` : ""}
       <div class="callout expert"><p><strong>Fire is a normal part of nature here.</strong> Many Southern California plants and animals have lived with fire for thousands of years. The trouble is that fires now start more often and burn hotter, and plant bullies make them worse.</p></div>
       <h3>How fire changes the land here</h3>
       <p class="muted-note">Best guess from the map spot: ${esc(habNames.join(", ") || "wild land")}. A map can't tell us exactly what grows in every spot, so ask an expert to check!</p>
@@ -139,11 +138,11 @@
     if (poly) {
       L.geoJSON(poly, {
         bubblingMouseEvents: false,
-        style: { color: c.stroke, weight: f.kind === "active" ? 3 : 2, fillColor: c.fill, fillOpacity: f.kind === "active" ? .38 : .28, dashArray: f.kind === "recent" ? "6 4" : null },
+        style: { color: c.stroke, weight: f.kind === "old" ? 2 : 3, fillColor: c.fill, fillOpacity: f.kind === "old" ? .28 : .38, dashArray: null },
         onEachFeature: (ft, layer) => layer.on("click", e => { L.DomEvent.stopPropagation(e); showFire(f); })
       }).addTo(group);
     }
-    const m = L.marker(f.ll, { icon: flameIcon(f.kind, f.kind === "active" ? 34 : 28), title: f.name, keyboard: true, riseOnHover: true }).addTo(group);
+    const m = L.marker(f.ll, { icon: flameIcon(f.kind, f.kind === "old" ? 28 : 32), title: f.name, keyboard: true, riseOnHover: true }).addTo(group);
     m.bindTooltip(f.name, { direction: "top", offset: [0, -26] });
     m.on("click", e => { showFire(f); });
   }
@@ -255,7 +254,8 @@
         addFire(f, ft); nRecent++;
       });
       const t = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-      setStatus(`<strong>Fire map updated at ${t}.</strong> ${nActive} recent fires (last two weeks) and ${nRecent} bigger fires earlier this year. Source: National Interagency Fire Center, checked every 10 minutes while this page is open. That feed can be hours behind and early sizes are often too small, so for the newest facts see <a href="${OFFICIAL}" target="_blank" rel="noopener">Cal Fire</a>. ${nActive === 0 ? "No recent fires were reported in Southern California. That is good news!" : ""}`, "ok");
+      const total = nActive + nRecent;
+      setStatus(`<strong>Fire map updated at ${t}.</strong> Showing ${total} fire${total === 1 ? "" : "s"} from this year. Source: National Interagency Fire Center, checked every 10 minutes while this page is open. That feed can be hours behind and early sizes are often too small, so for the newest facts see <a href="${OFFICIAL}" target="_blank" rel="noopener">Cal Fire</a>. ${total === 0 ? "No fires were reported in Southern California. That is good news!" : ""}`, "ok");
     }).catch(() => {
       clearLive();
       setStatus(`We could not reach the live fire map right now. Maybe the internet is off, or the fire service is busy. You can still click the purple flames for famous past fires. For today&rsquo;s fires, check the <a href="${OFFICIAL}" target="_blank" rel="noopener">official Cal Fire map</a>.`, "warn");
@@ -268,8 +268,8 @@
   /* ---------- layer checkboxes ---------- */
   document.querySelectorAll("[data-fire-layer]").forEach(cb => {
     cb.addEventListener("change", () => {
-      const g = groups[cb.dataset.fireLayer];
-      if (cb.checked) g.addTo(map); else map.removeLayer(g);
+      const key = cb.dataset.fireLayer;   /* "live" turns the recent and earlier-this-year groups on or off together */
+      (key === "live" ? [groups.active, groups.recent] : [groups[key]]).forEach(g => { if (cb.checked) g.addTo(map); else map.removeLayer(g); });
     });
   });
   if (refreshBtn) refreshBtn.addEventListener("click", loadLive);
