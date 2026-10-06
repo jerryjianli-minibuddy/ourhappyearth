@@ -26,25 +26,59 @@ const QUESTIONS = [
     why: "Always ask a grown-up first. Some plants are poisonous, and parks have rules about pulling plants." }
 ];
 
-/* ---- Easy questions for the pop-up "Heart Rescue" in the arcade games ----
-   Short, 3 choices, the right answer is the one a 10-year-old can reason out. */
+/* ---- "Wow, I didn't know that!" questions for the pop-ups in the arcade games ----
+   Surprising, true facts about Southern California nature. Plain names, no science words.
+   3 choices; the first answer is the right one (they get shuffled). The "why" is the wow moment. */
 const EASY_QUESTIONS = [
-  { q: "What do plant bullies (invasive plants) do?", a: ["Crowd out the native plants", "Help native plants grow", "Only grow in water"], why: "Plant bullies spread fast and take the space, water, and sunlight native plants need." },
-  { q: "Native plants are plants that...", a: ["Grew in a place naturally, long before people moved plants around", "Were made in a factory", "Only grow in other countries"], why: "Native plants belong here, and local animals need them." },
-  { q: "Which of these needs milkweed to live?", a: ["Monarch butterflies", "Dolphins", "Penguins"], why: "Monarch caterpillars only eat milkweed leaves." },
-  { q: "What does a seed need to start growing?", a: ["Water and soil", "Candy", "Plastic"], why: "A seed wakes up when it gets water, and then its roots reach into the soil." },
-  { q: "You find a plant outside and you don't know what it is. What should you do?", a: ["Ask a grown-up before touching it", "Eat a leaf to check", "Pull it out right away"], why: "Some plants are poisonous. Always ask a grown-up first, and never eat a plant you find outside." },
-  { q: "Hydroseeding means spraying seeds onto...", a: ["The soil", "The sky", "The ocean"], why: "A sprayed mix of seed and mulch sticks to the soil, even on steep hills." },
-  { q: "Dry bully grasses can make what spread faster?", a: ["Wildfires", "Snowstorms", "Earthquakes"], why: "Dry grass burns easily, so it helps fires spread." },
-  { q: "In Southern California, what is a good season to plant native plants?", a: ["Fall, before the rain", "The hottest day of summer", "Never"], why: "In fall, roots can grow while the weather is cool and rain is on the way." },
-  { q: "The California gnatcatcher is a...", a: ["Tiny bird", "Big fish", "Tall tree"], why: "It is a tiny gray bird that lives in coastal sage scrub." },
-  { q: "Who needs native plants for food and homes?", a: ["Bees, birds, and butterflies", "Nobody", "Only people"], why: "Local animals and insects have lived with native plants for thousands of years." },
-  { q: "Fire is a normal part of nature in Southern California. What helps burned places grow back?", a: ["Native plants and seeds", "More plant bullies", "Plastic grass"], why: "Native plants and seeds help the land heal after a fire." },
-  { q: "What is a habitat?", a: ["The place where a plant or animal lives", "A kind of hat", "A school lunch"], why: "A habitat is an animal or plant's home, with the food, water, and shelter it needs." }
+  { q: "Some wildflower seeds in our hills sleep in the dirt for years. What wakes them up?", a: ["Smoke and heat from a wildfire", "A snowstorm", "Loud music"],
+    why: "Wow! These seeds wait for a fire. The smoke tells them, \"The old bushes are gone, there's sunshine now. Time to grow!\"" },
+  { q: "Acorn woodpeckers save acorns for winter. Where do they keep them?", a: ["In thousands of tiny holes they drill into one tree", "In a pile on the beach", "In their nest under water"],
+    why: "One \"pantry tree\" can hold tens of thousands of acorns, each one tapped into its own little hole!" },
+  { q: "Blue-belly lizards (fence lizards) have a superpower in their blood. What is it?", a: ["It kills a germ that ticks carry", "It glows in the dark", "It's hot like lava"],
+    why: "When a tick bites one of these lizards, the lizard's blood cleans out the germ that causes Lyme disease. Lizards help keep people healthy!" },
+  { q: "How fast can a roadrunner run?", a: ["About 20 miles per hour", "About 1 mile per hour", "About 200 miles per hour"],
+    why: "That's as fast as a bike zooming downhill! Roadrunners are fast enough to catch lizards, and even small rattlesnakes." },
+  { q: "How many times can a hummingbird's heart beat in one minute?", a: ["More than 1,000 times", "About 10 times", "Only once"],
+    why: "Your heart beats about 80 to 100 times a minute. A hummingbird's heart can beat more than 1,000 times!" },
+  { q: "How far can an owl turn its head?", a: ["Almost all the way around", "Not at all", "Only up and down"],
+    why: "Owls can't move their eyes, so they turn their heads instead, about three-quarters of the way around!" },
+  { q: "Monarch caterpillars only eat milkweed. What does milkweed do for them?", pic: "milkweed", a: ["Makes them taste yucky to birds", "Makes them invisible", "Turns them into frogs"],
+    why: "Milkweed has a bitter juice. Caterpillars that eat it taste bad, so birds learn to leave them alone!" },
+  { q: "What does a California poppy do at night?", pic: "california-poppy", a: ["It closes its petals", "It glows", "It walks to a new spot"],
+    why: "Poppies fold up at night and on cold, cloudy days, then open again when the sun comes out." },
+  { q: "How many kinds of wild bees live in California?", a: ["About 1,600 kinds", "Just 1 kind", "About 5 kinds"],
+    why: "Most of them don't live in hives at all. Many live alone in tiny tunnels in the ground!" },
+  { q: "This bush smells so strong that cowboys had a nickname for it. What was it?", pic: "california-sagebrush", a: ["Cowboy cologne", "Stinky socks", "Horse candy"],
+    why: "California sagebrush smells amazing. People say cowboys rubbed it on themselves after long, dusty rides!" },
+  { q: "A wildfire burns a chamise bush down to the ground. What happens next?", pic: "chamise", a: ["It grows back from its roots", "It turns into a rock", "It moves to a new hill"],
+    why: "Many bushes in our hills have big, tough roots that survive the fire. New green shoots can pop up just weeks later!" },
+  { q: "The plant bully giant reed grows super fast. How fast?", pic: "giant-reed", a: ["Almost 4 inches in one day", "1 inch a year", "It never grows"],
+    why: "You could almost watch it grow! That's how it crowds out other plants along rivers." },
+  { q: "How many seeds can one pampas grass plant make?", pic: "pampas-grass", a: ["Up to about a million", "About 10", "None at all"],
+    why: "Its fluffy seeds float away on the wind. That's how one plant bully can start lots more far away." },
+  { q: "Tree of heaven is a plant bully with a sneaky trick. What is it?", pic: "tree-of-heaven", a: ["It leaks a chemical that stops other plants from growing", "It can sing", "It turns invisible in winter"],
+    why: "It poisons the soil for its neighbors. And its leaves smell a bit like rotten peanut butter!" },
+  { q: "Ice plant was planted on freeway hills to hold the dirt. Why was that a bad idea?", pic: "ice-plant", a: ["After rain it gets heavy and can slide down the hill", "It's too pretty", "It eats cars"],
+    why: "Ice plant has short roots and soaks up water. A big wet patch can get so heavy it slides right off the hill!" },
+  { q: "Oak trees are like a giant snack bar. How many kinds of caterpillars can eat oak leaves?", pic: "coast-live-oak", a: ["Hundreds of kinds", "None", "Just one"],
+    why: "Oaks feed more kinds of caterpillars than almost any other tree, and those caterpillars feed baby birds!" },
+  { q: "How long can a desert tortoise go without drinking water?", a: ["Up to a year", "One hour", "It drinks every 5 minutes"],
+    why: "A desert tortoise can store water inside its body and use it slowly. It can live for 50 years or more!" },
+  { q: "Mountain lions live in the hills near Los Angeles. What are people building to help them?", a: ["A giant bridge over the freeway just for animals", "Tiny cars for lions", "A lion swimming pool"],
+    why: "The wildlife crossing over the 101 freeway lets mountain lions and other animals cross safely. It's one of the biggest in the world!" },
+  { q: "A famous mountain lion named P-22 lived where?", a: ["In Griffith Park, in the middle of Los Angeles", "In a zoo in Paris", "On a beach in Hawaii"],
+    why: "He crossed two busy freeways to get there and became a Los Angeles celebrity!" },
+  { q: "Workers spray seeds onto burned hills in a goo. Why is the goo often bright green?", a: ["So they can see where they already sprayed", "Because seeds love green", "To scare away birds"],
+    why: "It's a dye that fades away later. It helps the crew cover the whole hill without missing a spot." },
+  { q: "How long can some seeds wait in the dirt before they sprout?", a: ["Many years, even decades", "One second", "Exactly one day"],
+    why: "The dirt is like a seed bank full of sleeping seeds, waiting for just the right moment to grow." },
+  { q: "California condors live in mountains near us. How wide are their wings?", a: ["About 9 feet", "About 9 inches", "About 90 feet"],
+    why: "That's wider than a grown-up is tall! They're the biggest flying birds in North America." },
+  { q: "A really big wildfire can make something in the sky. What is it?", a: ["Its own giant clouds", "A rainbow made of fire", "Chocolate rain"],
+    why: "Hot air from a huge fire rises so fast it can build a tall cloud called a fire cloud. Some even make lightning!" },
+  { q: "The name manzanita means \"little apple\" in Spanish. Why?", pic: "manzanita", a: ["Its berries look like tiny apples", "Apples grow under it", "It smells like apple pie"],
+    why: "Manzanita berries look like teeny apples, and birds and bears love to eat them." }
 ];
-/* Plants most kids can tell apart, used for "friend or bully?" */
-const EASY_FRIENDS = ["california-poppy", "california-sagebrush", "coast-live-oak", "milkweed", "california-sunflower", "willow", "cattail"];
-const EASY_BULLIES = ["pampas-grass", "ice-plant", "ivy", "castor-bean", "fountain-grass", "giant-reed", "tree-of-heaven"];
 
 const _recentQ = [];
 const _pickOne = a => a[Math.floor(Math.random() * a.length)];
@@ -52,28 +86,12 @@ const _pickOne = a => a[Math.floor(Math.random() * a.length)];
 function _fromBank(q) {
   return { q: q.q, pic: q.pic, why: q.why, opts: shuffle(q.a.map((text, i) => ({ text, ok: i === (q.c || 0) }))) };
 }
-function _typeQuestion(p) {
-  const first = p.fact.split(/(?<=[.!?])\s/)[0];
-  return {
-    q: "Is " + p.name + " a plant friend (native) or a plant bully (invasive)?",
-    pic: p.id,
-    why: p.name + ": " + first,
-    opts: [{ text: "Plant friend (native)", ok: p.type === "native" }, { text: "Plant bully (invasive)", ok: p.type === "invasive" }]
-  };
-}
 
-/* Returns { q, pic?, why, opts: [{ text, ok }] }. Easy on purpose. Avoids repeating recent questions. */
+/* Returns { q, pic?, why, opts: [{ text, ok }] }. Avoids repeating recent questions. */
 function nextQuestion() {
-  let item, key, tries = 0;
-  do {
-    if (Math.random() < 0.6) { const q = _pickOne(EASY_QUESTIONS); key = "q:" + q.q; item = _fromBank(q); }
-    else {
-      const id = _pickOne(Math.random() < 0.5 ? EASY_FRIENDS : EASY_BULLIES);
-      const p = PLANTS.find(x => x.id === id); key = "t:" + id; item = _typeQuestion(p);
-    }
-    tries++;
-  } while (_recentQ.includes(key) && tries < 12);
-  _recentQ.push(key);
-  if (_recentQ.length > 10) _recentQ.shift();
-  return item;
+  let q, tries = 0;
+  do { q = _pickOne(EASY_QUESTIONS); tries++; } while (_recentQ.includes(q.q) && tries < 20);
+  _recentQ.push(q.q);
+  if (_recentQ.length > 12) _recentQ.shift();
+  return _fromBank(q);
 }
