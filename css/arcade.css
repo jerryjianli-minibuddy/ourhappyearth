@@ -140,3 +140,6 @@
 .hole.sprouted::after { content: "\1F331"; position: absolute; left: 50%; bottom: 16%; transform: translateX(-50%); font-size: 2rem; animation: sprout-in .9s ease-out; }
 @keyframes sprout-in { 0% { opacity: 0; transform: translate(-50%, 30%) scale(.4); } 30% { opacity: 1; transform: translate(-50%, 0) scale(1); } 85% { opacity: 1; } 100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .mole.up.is-bully, .mole-hint { animation: none; } }
+
+/* Flappy Seed */
+#fs-canvas { width: 100%; height: auto; aspect-ratio: 360 / 520; border-radius: 18px; border: 3px solid var(--line); touch-action: manipulation; display: block; cursor: pointer; background: #BFE3F3; user-select: none; -webkit-user-select: none; }
