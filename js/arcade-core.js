@@ -57,16 +57,16 @@ window.AC = (function () {
     overlay.className = "qpop";
     overlay.setAttribute("role", "dialog");
     overlay.setAttribute("aria-modal", "true");
-    overlay.setAttribute("aria-label", opts.final ? "Final question" : opts.full ? "Bonus question" : "Heart Rescue question");
+    overlay.setAttribute("aria-label", opts.head ? "Question" : opts.final ? "Final question" : opts.full ? "Bonus question" : "Heart Rescue question");
     const pl = item.pic ? PLANTS.find(p => p.id === item.pic) : null;
     overlay.innerHTML = `<div class="qpop-box">
-      <div class="qpop-head">${opts.final ? "&#127942; Final question!" : opts.full ? "&#11088; Bonus question!" : "&#10084;&#65039; Heart Rescue!"}</div>
-      <p class="qpop-sub">${opts.final ? "Answer right to win 50 bonus points." : opts.full ? "Your hearts are full. Answer right to win 50 bonus points." : "Answer right to win a heart back."}</p>
+      <div class="qpop-head">${opts.head ? opts.head : opts.final ? "&#127942; Final question!" : opts.full ? "&#11088; Bonus question!" : "&#10084;&#65039; Heart Rescue!"}</div>
+      <p class="qpop-sub">${opts.sub ? opts.sub : opts.final ? "Answer right to win 50 bonus points." : opts.full ? "Your hearts are full. Answer right to win 50 bonus points." : "Answer right to win a heart back."}</p>
       ${pl ? `<div class="q-pic">${plantPic(pl, 110)}</div>` : ""}
       <p class="q-text">${item.q}</p>
       <div class="options">${item.opts.map((o, i) => `<button type="button" class="opt" data-i="${i}">${o.text}</button>`).join("")}</div>
       <div class="feedback" role="status" aria-live="polite"></div>
-      <div class="qpop-actions"><button type="button" class="btn" data-go hidden>${opts.final ? "See my score" : "Back to the game"}</button></div>
+      <div class="qpop-actions"><button type="button" class="btn" data-go hidden>${opts.goText ? opts.goText : opts.final ? "See my score" : "Back to the game"}</button></div>
     </div>`;
     panel.appendChild(overlay);
     qOverlay = overlay;
