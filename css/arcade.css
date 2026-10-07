@@ -31,6 +31,7 @@
 
 /* Seed Catcher */
 .canvas-wrap { max-width: 400px; margin: 0 auto; }
+.canvas-wrap, .canvas-wrap canvas { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; outline: none; }
 #sc-canvas { width: 100%; height: auto; aspect-ratio: 360 / 520; border-radius: 18px; border: 3px solid var(--line); touch-action: none; display: block; cursor: ew-resize; background: #BFE3F3; }
 
 /* Grow & Merge */
