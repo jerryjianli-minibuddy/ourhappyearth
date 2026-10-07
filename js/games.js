@@ -11,7 +11,7 @@
   /* ---------------- tabs ---------------- */
   const tabs = document.querySelectorAll(".tab");
   const panels = {
-    bully: $("#game-bully"), catch: $("#game-catch"), merge: $("#game-merge"), grow: $("#game-grow"),
+    bully: $("#game-bully"), catch: $("#game-catch"), flappy: $("#game-flappy"), merge: $("#game-merge"), grow: $("#game-grow"),
     quiz: $("#game-quiz"), spot: $("#game-spot"), sort: $("#game-sort")
   };
   let current = null;
