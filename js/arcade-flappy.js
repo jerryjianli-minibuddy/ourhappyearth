@@ -8,7 +8,7 @@ Arcade.flappy = (function () {
   const W = 360, H = 520, GROUND = H - 56;
   const SEED_X = 96, R = 15;                 /* bee position and hit radius (body is about 27 x 21, so forgiving) */
   const GRAVITY = 1250, FLAP = 360, MAX_FALL = 560;
-  const STALK_W = 54, SPACING = 205;
+  const STALK_W = 54, SPACING = 170;
   const root = () => $("#game-flappy");
   /* the bee hero (picture is 120 x 114, drawn at half size; body center at 63.6, 69.1) */
   const SPRITE = new Image();
@@ -65,7 +65,7 @@ Arcade.flappy = (function () {
     cv.width = W * dpr; cv.height = H * dpr;
     ctx = cv.getContext("2d");
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    st = { state: "ready", y: H * 0.42, vy: 0, t: 0, flapT: 1, score: 0, obs: [], drops: [], sprouts: [], pops: [], clouds: makeClouds(), groundX: 0, qRight: 0, qTotal: 0, flash: 0 };
+    st = { state: "ready", y: H * 0.42, vy: 0, t: 0, flapT: 1, score: 0, obs: [], sprouts: [], pops: [], clouds: makeClouds(), groundX: 0, qRight: 0, qTotal: 0, flash: 0 };
     cv.addEventListener("pointerdown", e => { e.preventDefault(); flap(); });
     document.addEventListener("keydown", onKey);
     last = performance.now();
@@ -113,10 +113,8 @@ Arcade.flappy = (function () {
 
     /* move everything left */
     st.obs.forEach(o => { o.x -= v * dt; });
-    st.drops.forEach(d => { d.x -= v * dt; });
     st.sprouts.forEach(s => { s.x -= v * dt; });
     st.obs = st.obs.filter(o => o.x > -STALK_W - 10);
-    st.drops = st.drops.filter(d => d.x > -20 && !d.got);
     st.sprouts = st.sprouts.filter(s => s.x > -20);
 
     /* new bully pair */
@@ -126,7 +124,6 @@ Arcade.flappy = (function () {
       const mid = 110 + Math.random() * (GROUND - 220);
       const ob = { x: W + 10, top: mid - gap / 2, bot: mid + gap / 2, passed: false };
       st.obs.push(ob);
-      if (Math.random() < 0.35) st.drops.push({ x: ob.x + STALK_W / 2, y: mid, got: false });
     }
 
     /* passing a bully makes a flower bloom */
@@ -138,15 +135,6 @@ Arcade.flappy = (function () {
         sfx.good();
         if (st.score % 10 === 0) { bear.cheer(st.score + " flowers blooming! You're a super bee!"); sfx.great(); }
         updateHud();
-      }
-    });
-
-    /* raindrops are a +1 bonus */
-    st.drops.forEach(d => {
-      if (!d.got && Math.hypot(d.x - SEED_X, d.y - st.y) < R + 9) {
-        d.got = true; st.score++;
-        st.pops.push({ x: d.x, y: d.y, text: "+1 rain!", t: 0 });
-        sfx.good(); updateHud();
       }
     });
 
@@ -226,7 +214,6 @@ Arcade.flappy = (function () {
     ctx.beginPath(); ctx.moveTo(150, GROUND); ctx.quadraticCurveTo(290, GROUND - 150, W + 40, GROUND); ctx.fill();
 
     st.obs.forEach(drawBully);
-    st.drops.forEach(d => { if (!d.got) drawDrop(d.x, d.y); });
 
     /* ground */
     ctx.fillStyle = "#7A5230"; ctx.fillRect(0, GROUND, W, H - GROUND);
@@ -286,12 +273,6 @@ Arcade.flappy = (function () {
     ctx.strokeStyle = "#1F1F1F"; ctx.lineWidth = 2.5;
     ctx.beginPath(); ctx.moveTo(cx - 16, fy - 9); ctx.lineTo(cx - 4, fy - 5); ctx.moveTo(cx + 16, fy - 9); ctx.lineTo(cx + 4, fy - 5); ctx.stroke();
     ctx.beginPath(); ctx.arc(cx, fy + 14, 6, Math.PI * 1.15, Math.PI * 1.85); ctx.stroke();
-  }
-
-  function drawDrop(x, y) {
-    ctx.fillStyle = "#4FA8D8"; ctx.strokeStyle = "#1F6FB2"; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(x, y - 11); ctx.quadraticCurveTo(x + 9, y + 1, x, y + 8); ctx.quadraticCurveTo(x - 9, y + 1, x, y - 11); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = "rgba(255,255,255,.8)"; ctx.beginPath(); ctx.arc(x - 2.5, y, 2, 0, 7); ctx.fill();
   }
 
   function drawSprout(x, y, g, c) {
