@@ -1,6 +1,6 @@
 /* Arcade games, part 2: Grow & Merge, Restore the Hill */
 
-/* drawings for the 8 growth stages (used by Grow & Merge) */
+/* drawings for the 13 growth stages (used by Grow & Merge) */
 function stageSVG(v, size) {
   const s = size || 60;
   let g = "";
@@ -32,6 +32,27 @@ function stageSVG(v, size) {
     case 8: // oak forest
       g = '<circle cx="50" cy="12" r="7" fill="#FFD76A"/><ellipse cx="32" cy="59" rx="28" ry="4" fill="rgba(0,0,0,.14)"/><rect x="9" y="38" width="4" height="20" fill="#7a5a3a"/><circle cx="11" cy="32" r="11" fill="#4C8A5A"/><rect x="49" y="38" width="4" height="20" fill="#7a5a3a"/><circle cx="51" cy="32" r="11" fill="#3F7F52"/><rect x="29" y="30" width="6" height="28" fill="#7a5a3a"/><circle cx="32" cy="22" r="14" fill="#2F6B45"/><circle cx="22" cy="30" r="8" fill="#356B45"/><circle cx="42" cy="30" r="8" fill="#3F7F52"/>';
       break;
+    case 9: // wild forest: the forest plus the animals that moved in
+      g = '<rect x="0" y="50" width="64" height="14" fill="#7FB86A"/><rect x="7" y="30" width="4" height="22" fill="#6B4E31"/><circle cx="9" cy="24" r="10" fill="#2F6B45"/><rect x="52" y="28" width="4" height="24" fill="#6B4E31"/><circle cx="54" cy="22" r="10" fill="#356B45"/><rect x="29" y="22" width="5" height="28" fill="#6B4E31"/><circle cx="31" cy="15" r="12" fill="#2F6B45"/><circle cx="22" cy="22" r="7" fill="#3F7F52"/><circle cx="41" cy="21" r="7" fill="#4C8A5A"/>'
+        + '<ellipse cx="40" cy="47" rx="8" ry="4.5" fill="#A0703F"/><rect x="34" y="49" width="2" height="8" fill="#7A5230"/><rect x="44" y="49" width="2" height="8" fill="#7A5230"/><path d="M46 45 L50 38" stroke="#A0703F" stroke-width="3.5" stroke-linecap="round"/><ellipse cx="51" cy="37" rx="3.5" ry="2.6" fill="#A0703F"/><path d="M50 35 L48 30 M48 32 L46 31 M52 35 L54 30 M54 32 L56 31" stroke="#6B4E31" stroke-width="1.3" stroke-linecap="round"/>'
+        + '<path d="M12 8 q3 -3 6 0 q3 -3 6 0" stroke="#1F3A2B" stroke-width="1.6" fill="none" stroke-linecap="round"/><ellipse cx="20" cy="46" rx="3.5" ry="3" fill="#8A6A4A"/><circle cx="22" cy="42.5" r="2" fill="#8A6A4A"/><path d="M17 45 q-4 -5 0 -8" stroke="#8A6A4A" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+      break;
+    case 10: // green mountains
+      g = '<rect x="0" y="0" width="64" height="64" fill="#D8EEF8"/><circle cx="52" cy="11" r="6" fill="#FFD76A"/><path d="M-2 56 L20 18 L34 40 L44 26 L66 56 Z" fill="#4C8A5A"/><path d="M20 18 L15 27 L19 25 L22 28 L25 25 Z" fill="#FFFFFF"/><path d="M44 26 L40 32 L44 31 L47 33 Z" fill="#FFFFFF"/><path d="M-2 64 L-2 50 Q16 40 32 50 T66 48 L66 64 Z" fill="#6DB56A"/>'
+        + '<circle cx="10" cy="49" r="3.5" fill="#2F6B45"/><circle cx="17" cy="47" r="3" fill="#356B45"/><circle cx="46" cy="50" r="3.5" fill="#2F6B45"/><circle cx="53" cy="48" r="3" fill="#356B45"/><circle cx="28" cy="38" r="2.6" fill="#2F6B45"/><circle cx="12" cy="36" r="2.6" fill="#2F6B45"/><circle cx="50" cy="40" r="2.4" fill="#2F6B45"/>';
+      break;
+    case 11: // river valley
+      g = '<rect x="0" y="0" width="64" height="64" fill="#D8EEF8"/><path d="M-2 40 L14 14 L28 34 Z" fill="#4C8A5A"/><path d="M36 34 L52 10 L66 34 Z" fill="#3F7F52"/><rect x="0" y="32" width="64" height="32" fill="#7FB86A"/>'
+        + '<path d="M30 32 C26 38 40 42 34 48 C28 54 22 56 26 64 L40 64 C36 58 42 54 46 48 C52 40 36 38 36 32 Z" fill="#4FA8D8"/><path d="M33 40 q2 2 4 0 M30 52 q2 2 4 0" stroke="#FFFFFF" stroke-width="1.3" fill="none" stroke-linecap="round"/>'
+        + '<circle cx="10" cy="44" r="5" fill="#2F6B45"/><circle cx="18" cy="52" r="4.5" fill="#356B45"/><circle cx="54" cy="44" r="5" fill="#2F6B45"/><circle cx="50" cy="56" r="4.5" fill="#356B45"/><path d="M38 44 l3 -1.5 l0 3 Z" fill="#F28C28"/>';
+      break;
+    case 12: // green California
+      g = '<rect x="0" y="0" width="64" height="64" fill="#9FD0F0"/><path d="M15 4 L33 4 L33 23 L53 45 L54 50 L50 54 L48 60 L38 60 L36 55 L29 49 L24 43 L19 36 L17 28 L13 21 L13 12 Z" fill="#5FAF4A" stroke="#2F6B45" stroke-width="1.6" stroke-linejoin="round"/>'
+        + '<circle cx="22" cy="14" r="2.6" fill="#2F6B45"/><circle cx="27" cy="22" r="2.4" fill="#2F6B45"/><circle cx="25" cy="33" r="2.3" fill="#2F6B45"/><circle cx="34" cy="36" r="2.4" fill="#356B45"/><circle cx="42" cy="47" r="2.3" fill="#2F6B45"/><circle cx="30" cy="42" r="2" fill="#F28C28"/><circle cx="38" cy="53" r="2" fill="#F28C28"/><circle cx="20" cy="26" r="2" fill="#FFC94A"/>';
+      break;
+    case 13: // happy Earth (the site's own earth)
+      g = '<circle cx="32" cy="32" r="29" fill="#4DA3D8"/><path d="M14 22c6-8 16-8 20-4 3 3-1 8-6 9-5 1-5 6-10 5-4-1-7-6-4-10z" fill="#5CB85C"/><path d="M38 40c6-4 14-2 15 4-3 8-10 12-17 10-4-2-3-8 2-14z" fill="#5CB85C"/><circle cx="24" cy="31" r="3" fill="#1F3A2B"/><circle cx="40" cy="31" r="3" fill="#1F3A2B"/><path d="M23 40c5 6 13 6 18 0" fill="none" stroke="#1F3A2B" stroke-width="3" stroke-linecap="round"/><circle cx="19" cy="38" r="3" fill="#F9A6A6" opacity=".8"/><circle cx="45" cy="38" r="3" fill="#F9A6A6" opacity=".8"/>';
+      break;
   }
   return `<svg viewBox="0 0 64 64" width="${s}" height="${s}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">${g}</svg>`;
 }
@@ -41,10 +62,23 @@ function stageSVG(v, size) {
    ===================================================================== */
 Arcade.merge = (function () {
   const { store, bear, $, sfx } = AC;
-  const N = 4, MAXL = 8;
-  const NAMES = ["", "Seed", "Sprout", "Seedling", "Shrub", "Wildflower", "Young oak", "Big oak", "Oak forest"];
+  const N = 5, MAXL = 13;
+  const NAMES = ["", "Seed", "Sprout", "Seedling", "Shrub", "Wildflower", "Young oak", "Big oak", "Oak forest",
+    "Wild forest", "Mountains", "River valley", "California", "Happy Earth"];
+  /* said by Cali the first time a player reaches each big level */
+  const LEVEL_MSG = {
+    6: "Level 6: Young oak! Oaks can live for hundreds of years.",
+    7: "Level 7: Big oak! One oak is home to birds, squirrels, and tons of bugs.",
+    8: "Level 8: Oak forest! Forests clean the air we breathe. Keep going!",
+    9: "Level 9: Wild forest! Deer, owls, and squirrels moved in.",
+    10: "Level 10: Mountains! Plant roots hold the soil so the hills don't wash away in the rain.",
+    11: "Level 11: River valley! Healthy hills keep the river clean for fish and people.",
+    12: "Level 12: Green California! California has more kinds of native plants than any other state.",
+    13: "Level 13: HAPPY EARTH! You grew a whole happy planet! You beat the game!"
+  };
+  const TOP_KEY = "ohe-merge-top";
   const root = () => $("#game-merge");
-  let tiles = [], nextId = 1, score = 0, undoState = null, busy = false, over = false, won = false, active = false;
+  let tiles = [], nextId = 1, score = 0, undoState = null, busy = false, over = false, won = false, active = false, topNow = 1;
 
   const keyHandler = e => {
     if (!active) return;
@@ -57,9 +91,9 @@ Arcade.merge = (function () {
     root().innerHTML = `
       <div class="hud"><span>Score <strong id="mg-score">0</strong></span><span>Best <strong id="mg-best">${best}</strong></span>
         <span><button class="btn ghost small" id="mg-undo" type="button">Undo</button> <button class="btn ghost small" id="mg-new" type="button">New game</button></span></div>
-      <p class="hint">Slide the board (swipe, arrow keys, or the buttons). When two matching plants touch, they <strong>grow into the next stage</strong>. Can you grow an <strong>Oak forest</strong>?</p>
+      <p class="hint">Slide the board (swipe, arrow keys, or the buttons). When two matching tiles touch, they <strong>grow into the next level</strong>. 13 levels, from a tiny seed to a <strong>Happy Earth</strong>! How far can you go?</p>
       <div class="merge-board" id="mg-board" tabindex="0" aria-label="Game board. Use arrow keys to slide the plants.">
-        <div class="merge-cells">${'<div class="mcell"></div>'.repeat(16)}</div>
+        <div class="merge-cells">${'<div class="mcell"></div>'.repeat(N * N)}</div>
         <div class="tiles" id="mg-tiles"></div>
       </div>
       <div class="dpad" aria-label="Move buttons">
@@ -68,7 +102,9 @@ Arcade.merge = (function () {
         <button type="button" class="btn ghost small" data-dir="3" aria-label="Down">&darr;</button>
         <button type="button" class="btn ghost small" data-dir="2" aria-label="Right">&rarr;</button></div>
       </div>
-      <div class="stages" aria-label="Growth stages">${[1, 2, 3, 4, 5, 6, 7, 8].map(i => `<span class="stage">${stageSVG(i, 34)}<small>${NAMES[i]}</small></span>`).join('<span class="arrow">&rarr;</span>')}</div>`;
+      <p class="stages-title">All 13 levels <small>(gray = you haven't reached it yet)</small></p>
+      <div class="stages" id="mg-stages" aria-label="Growth levels">${NAMES.slice(1).map((n, k) => `<span class="stage" data-l="${k + 1}">${stageSVG(k + 1, 34)}<small>${k + 1}. ${n}</small></span>`).join('<span class="arrow">&rarr;</span>')}</div>`;
+    markStages();
     $("#mg-new").addEventListener("click", newGame);
     $("#mg-undo").addEventListener("click", undo);
     root().querySelectorAll("[data-dir]").forEach(b => b.addEventListener("click", () => move(+b.dataset.dir)));
@@ -85,7 +121,12 @@ Arcade.merge = (function () {
     board.addEventListener("pointercancel", () => { tracking = false; });
   }
 
-  function place(t) { t.el.style.left = t.c * 25 + "%"; t.el.style.top = t.r * 25 + "%"; }
+  function place(t) { t.el.style.left = t.c * 100 / N + "%"; t.el.style.top = t.r * 100 / N + "%"; }
+  /* color in every level the player has ever reached; the rest stay gray */
+  function markStages() {
+    const top = store.get(TOP_KEY, 1);
+    root().querySelectorAll("#mg-stages .stage").forEach(el => el.classList.toggle("locked", +el.dataset.l > top));
+  }
   function paint(t) {
     t.el.dataset.v = t.v;
     t.el.innerHTML = `<div class="tile-in">${stageSVG(t.v, 56)}<span class="tile-name">${NAMES[t.v]}</span></div>`;
@@ -115,7 +156,7 @@ Arcade.merge = (function () {
   }
 
   function newGame() {
-    tiles = []; nextId = 1; score = 0; undoState = null; busy = false; over = false; won = false;
+    tiles = []; nextId = 1; score = 0; undoState = null; busy = false; over = false; won = false; topNow = 1;
     build();
     addRandom(); addRandom();
     updateScore();
@@ -170,7 +211,12 @@ Arcade.merge = (function () {
         if (t.newV) {
           t.v = t.newV; t.newV = 0; paint(t);
           t.el.classList.remove("merged"); void t.el.offsetWidth; t.el.classList.add("merged");
-          if (t.v === MAXL && !won) { won = true; bear.cheer("You grew an Oak forest! Amazing!"); sfx.great(); }
+          if (t.v > topNow) {
+            topNow = t.v;
+            if (LEVEL_MSG[t.v]) { bear.cheer(LEVEL_MSG[t.v]); if (t.v >= 8) sfx.great(); }
+            if (t.v > store.get(TOP_KEY, 1)) { store.set(TOP_KEY, t.v); markStages(); }
+            if (t.v === MAXL) won = true;
+          }
         }
       });
       score += gained;
